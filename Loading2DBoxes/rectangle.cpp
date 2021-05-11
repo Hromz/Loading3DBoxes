@@ -58,9 +58,14 @@ bool Rectangle::boxCollision(const Rectangle& rec)
     return true;
 }
 
+void Rectangle::changeCoords(Coords& tl, Coords& tp, Coords& bl, Coords& br)
+{
+    
+}
 
 
-void Rectangle::placeInside(Rectangle& rec)
+
+void Rectangle::placeInside(Rectangle & rec)
 {
     if (container.size() == 0)
     {
@@ -70,26 +75,68 @@ void Rectangle::placeInside(Rectangle& rec)
 
     for (int i = 0; i < (int)container.size(); i++)
     {
-        if (!containerCollision(rec) && !container[i].boxCollision(rec))
+        if (container[i].isPossiblePlaceOnTopOfBox(rec) && !containerCollision(rec))
+        {
+
+        }
+        else if (container[i].isPossiblePlaceOnRightHandSide(rec) && !containerCollision(rec))
+        {
+
+        }
+
+        //sdadasda
+    }
+
+    /*
+    * if (!containerCollision(rec) && !container[i].boxCollision(rec))
         {
             rec.movePosition(container[i]);
             container.push_back(rec);
         }
-    }
+    */
+
 }
 
-void Rectangle::movePosition(const Rectangle neighbourRec)
+void Rectangle::movePosition(const Rectangle & neighbourRec)
 {
-    if (isPossiblePlaceOnTopOfBox(neighbourRec))
+   /* if (isPossiblePlaceOnTopOfBox(neighbourRec))
     {
         placeOnTopOfBox(neighbourRec);
     }
     else if (isPossiblePlaceOnRightHandSide(neighbourRec))
     {
         placeOnRightHandSide(neighbourRec);
-    }
+    }*/
 
 }
+
+
+bool Rectangle::isPossiblePlaceOnTopOfBox(const Rectangle& rec)
+{
+  
+    return true;
+}
+
+void Rectangle::placeOnTopOfBox(const Rectangle& rec)
+{
+
+}
+
+
+bool Rectangle::isPossiblePlaceOnRightHandSide(const Rectangle& rec)
+{
+
+    return true;
+}
+
+void Rectangle::placeOnRightHandSide(const Rectangle& rec)
+{
+
+}
+
+
+
+
 
 void Rectangle::print()
 {
@@ -120,25 +167,3 @@ void Rectangle::print()
 
 }
 
-
-bool Rectangle::isPossiblePlaceOnTopOfBox(const Rectangle& rec)
-{
-
-    return true;
-}
-
-void Rectangle::placeOnTopOfBox(const Rectangle& rec)
-{
-
-}
-
-
-bool Rectangle::isPossiblePlaceOnRightHandSide(const Rectangle& rec)
-{
-    return true;
-}
-
-void Rectangle::placeOnRightHandSide(const Rectangle& rec)
-{
-
-}
