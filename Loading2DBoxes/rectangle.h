@@ -23,7 +23,7 @@ public:
     bool contains(const Rectangle& rec);
 
     void placeInside(Rectangle& rec);
-    void movePosition(const Rectangle neighbourRec);
+    void movePosition(const Rectangle & neighbourRec);
     void changeCoords(Coords& tl, Coords& tp, Coords& bl, Coords& br);
 
 
@@ -35,6 +35,17 @@ public:
     void placeOnRightHandSide(const Rectangle& rec);
 
     std::vector<Rectangle> container;
+
+
+    Coords getTopLeft() { return topLeft; }
+    Coords getTopRight() { return topRight; }
+    Coords getBottomLeft() { return bottomLeft; }
+    Coords getBottomRight() { return bottomRight; }
+
+    void setTopLeft(Coords coords) { topLeft = coords; }
+    void setTopRight(Coords coords) { topRight = coords; }
+    void setBottomLeft(Coords coords) { bottomLeft = coords; }
+    void setBottomRight(Coords coords) { bottomRight = coords; }
 
     void print();
 
