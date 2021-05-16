@@ -1,40 +1,26 @@
 #include "rectangle.h"
 
 
-Rectangle::Rectangle(const Rectangle & rec)
+Rectangle::Rectangle(const Rectangle& rec)
 {
-    topLeft = rec.topLeft;
-    bottomLeft = rec.bottomLeft;
-    topRight = rec.bottomRight;
-    bottomRight = rec.bottomRight;
+    this->topLeft = rec.topLeft;
+    this->bottomLeft = rec.bottomLeft;
+    this->topRight = rec.topRight;
+    this->bottomRight = rec.bottomRight;
+
 }
 
 
 Rectangle::Rectangle(Coords& tl, Coords& tr, Coords& bl, Coords& br)
 {
-    topLeft.setX(tl.getX());
-    topLeft.setY(tl.getY());
-
-    topRight.setX(tr.getX());
-    topRight.setY(tr.getY());
-
-    bottomLeft.setX(bl.getX());
-    bottomLeft.setY(bl.getY());
-
-    bottomRight.setX(br.getX());
-    bottomRight.setY(br.getY());
-
+    topLeft.setX(tl.getX());  topLeft.setY(tl.getY());  topRight.setX(tr.getX());    topRight.setY(tr.getY());
+    bottomLeft.setX(bl.getX());  bottomLeft.setY(bl.getY());  bottomRight.setX(br.getX());  bottomRight.setY(br.getY());
 }
 
-Rectangle::Rectangle(float length, float height)
+Rectangle::Rectangle(int length, int height)
 {
-    topLeft.setX(0); topLeft.setY(height);
-
-    topRight.setX(length); topRight.setY(height);
-
-    bottomLeft.setX(0); bottomLeft.setY(0);
-
-    bottomRight.setX(length); bottomRight.setY(0);
+    topLeft.setX(0); topLeft.setY(height);  topRight.setX(length); topRight.setY(height);
+    bottomLeft.setX(0); bottomLeft.setY(0);  bottomRight.setX(length); bottomRight.setY(0);
 }
 
 bool Rectangle::containerCollision(const Rectangle& rec)
@@ -43,9 +29,9 @@ bool Rectangle::containerCollision(const Rectangle& rec)
         && bottomRight <= rec.bottomRight
         && topLeft >= rec.topLeft
         && topRight >= rec.topRight) {
-        return false;
+        return true;
     }
-    return true;
+    return false;
 }
 
 bool Rectangle::boxCollision(const Rectangle& rec)
@@ -58,83 +44,86 @@ bool Rectangle::boxCollision(const Rectangle& rec)
     return true;
 }
 
-void Rectangle::changeCoords(Coords& tl, Coords& tp, Coords& bl, Coords& br)
+
+Rectangle Rectangle::changeCoordsPlacingTop(const Rectangle& rec)
 {
-    
+    Rectangle* temp = new Rectangle;
+
+    temp->bottomLeft = this->topLeft;
+    temp->bottomRight = this->topRight;
+    temp->topLeft = (this->topLeft + rec.topLeft);
+    temp->topRight = (this->topRight + rec.topRight);
+
+    return *temp;
+}
+
+Rectangle Rectangle::changeCoordsPlacingRHS(const Rectangle& rec)
+{
+    Rectangle* temp = new Rectangle;
+
+    temp->bottomLeft = this->bottomRight;
+    temp->bottomRight = this->bottomRight + rec.bottomRight;
+    temp->topLeft = this->topRight;
+    temp->topRight = this->topRight + rec.topLeft;
+
+
+    return *temp;
 }
 
 
-
-void Rectangle::placeInside(Rectangle & rec)
+void Rectangle::placeInside(const Rectangle& rec)
 {
+    Rectangle temp = rec;
+
     if (container.size() == 0)
     {
-        container.push_back(rec);
+        container.push_back(temp);
         return;
     }
 
     for (int i = 0; i < (int)container.size(); i++)
     {
-        if (container[i].isPossiblePlaceOnTopOfBox(rec) && !containerCollision(rec))
+        if (container[i].isPossiblePlaceOnTopOfBox(temp) && !containerCollision(temp))
         {
-
+            temp = container[i].changeCoordsPlacingTop(temp);
+            container.push_back(temp);
+            container[i].setBoxOnTop(true);
+            break;
         }
-        else if (container[i].isPossiblePlaceOnRightHandSide(rec) && !containerCollision(rec))
+        else if (container[i].isPossiblePlaceOnRightHandSide(temp) && !containerCollision(temp))
         {
-
+            temp = container[i].changeCoordsPlacingRHS(temp);
+            container.push_back(temp);
+            container[i].setBoxOnRHS(true);
+            break;
+        }
+        else
+        {
+            break;
         }
 
-        //sdadasda
+
     }
 
-    /*
-    * if (!containerCollision(rec) && !container[i].boxCollision(rec))
-        {
-            rec.movePosition(container[i]);
-            container.push_back(rec);
-        }
-    */
-
 }
-
-void Rectangle::movePosition(const Rectangle & neighbourRec)
-{
-   /* if (isPossiblePlaceOnTopOfBox(neighbourRec))
-    {
-        placeOnTopOfBox(neighbourRec);
-    }
-    else if (isPossiblePlaceOnRightHandSide(neighbourRec))
-    {
-        placeOnRightHandSide(neighbourRec);
-    }*/
-
-}
-
 
 bool Rectangle::isPossiblePlaceOnTopOfBox(const Rectangle& rec)
 {
-  
-    return true;
-}
 
-void Rectangle::placeOnTopOfBox(const Rectangle& rec)
-{
-
+    if (!containsBoxOnTop() && !containerCollision(changeCoordsPlacingTop(rec)))
+        return true;
+    else
+        return false;
 }
 
 
 bool Rectangle::isPossiblePlaceOnRightHandSide(const Rectangle& rec)
 {
-
-    return true;
+    if (!containsBoxRHS() && !containerCollision(changeCoordsPlacingRHS(rec)))
+        return true;
+    else
+        return false;
 }
-
-void Rectangle::placeOnRightHandSide(const Rectangle& rec)
-{
-
-}
-
-
 
 
 
@@ -158,7 +147,14 @@ void Rectangle::print()
                 if (i == 0 || i == (int)topRight.getX())
                     cout << '@';
                 else
+                {
+                    /* for (int i = 0; i < container.size(); i++)
+                     {
+
+                     }*/
                     cout << ' ';
+                }
+
             }
             cout << "\n";
         }
@@ -167,3 +163,16 @@ void Rectangle::print()
 
 }
 
+
+void Rectangle::printCoords()
+{
+    using std::cout;
+    for (int i = 0; i < container.size(); i++)
+    {
+        cout << "(" << container[i].topLeft.getX() << "," << container[i].topLeft.getY() << ")" << " "
+            << "(" << container[i].topRight.getX() << "," << container[i].topRight.getY() << ")" << "\n";
+        cout << "(" << container[i].bottomLeft.getX() << "," << container[i].bottomLeft.getY() << ")" << " "
+            << "(" << container[i].bottomRight.getX() << "," << container[i].bottomRight.getY() << ")" << "\n";
+        cout << "_______________\n";
+    }
+}

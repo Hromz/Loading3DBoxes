@@ -1,4 +1,3 @@
-#pragma once
 #include "coords.h"
 #include <vector>
 #include <iostream>
@@ -12,27 +11,24 @@ private:
     Coords bottomLeft;
     Coords topRight;
     Coords bottomRight;
+    bool boxRhs = false;
+    bool boxTop = false;
 public:
     Rectangle() {};
     Rectangle(const Rectangle& rec);
     Rectangle(Coords& tl, Coords& tp, Coords& bl, Coords& br);
-    Rectangle(float length, float height);
+    Rectangle(int length, int height);
+    ~Rectangle() { };
 
     bool containerCollision(const Rectangle& rec);
     bool boxCollision(const Rectangle& rec);
-    bool contains(const Rectangle& rec);
+    void placeInside(const Rectangle& rec);
 
-    void placeInside(Rectangle& rec);
-    void movePosition(const Rectangle & neighbourRec);
-    void changeCoords(Coords& tl, Coords& tp, Coords& bl, Coords& br);
-
+    Rectangle changeCoordsPlacingTop(const Rectangle& rec);
+    Rectangle changeCoordsPlacingRHS(const Rectangle& rec);
 
     bool isPossiblePlaceOnTopOfBox(const Rectangle& rec);
-    void placeOnTopOfBox(const Rectangle& rec);
-
-
     bool isPossiblePlaceOnRightHandSide(const Rectangle& rec);
-    void placeOnRightHandSide(const Rectangle& rec);
 
     std::vector<Rectangle> container;
 
@@ -41,15 +37,18 @@ public:
     Coords getTopRight() { return topRight; }
     Coords getBottomLeft() { return bottomLeft; }
     Coords getBottomRight() { return bottomRight; }
+    bool containsBoxOnTop() { return boxTop; }
+    bool  containsBoxRHS() { return boxRhs; }
 
     void setTopLeft(Coords coords) { topLeft = coords; }
     void setTopRight(Coords coords) { topRight = coords; }
     void setBottomLeft(Coords coords) { bottomLeft = coords; }
     void setBottomRight(Coords coords) { bottomRight = coords; }
+    void setBoxOnRHS(bool b) { boxRhs = b; }
+    void setBoxOnTop(bool b) { boxTop = b; }
 
     void print();
-
-
+    void printCoords();
 };
 
 #endif // RECTANGLE_H
