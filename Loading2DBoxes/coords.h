@@ -6,7 +6,7 @@ class Coords
 private:
     int x, y;
 public:
-    Coords() { };
+    Coords() { x = 0; y = 0; };
     Coords(int x, int y) { this->x = x; this->y = y; };
     Coords(Coords& c) { x = c.x; y = c.y; };
 

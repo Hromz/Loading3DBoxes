@@ -17,7 +17,7 @@ int main()
 
     Rectangle cont(tl, tr, bl, br);
 
-    int quantity = 4, boxLength = 2, boxHeight = 2;
+    int quantity = 6, boxLength = 2, boxHeight = 2;
    /* cout << "Enter 2D box quantity: "; cin >> quantity;
     cout << "Length: "; cin >> boxLength;
     cout << "Height: "; cin >> boxHeight;*/
