@@ -12,10 +12,12 @@ public:
     Container(int length, int height);
     ~Container() {};
 
+    std::vector<Rectangle> boxesToBeLoaded;
+
     bool containerCollision(Rectangle& rec);
     bool collisionInsideContainer(Rectangle & rec);
     bool boxCollision(Rectangle & rec, Rectangle & boxInContainer);
-    void placeInside(const Rectangle& rec);
+    void placeInside(std::vector<Rectangle> & Boxes);
 
     Rectangle changeCoordsPlacingTop(Rectangle& rec, Rectangle & cont);
     Rectangle changeCoordsPlacingRHS(Rectangle& rec, Rectangle & cont);
