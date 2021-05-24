@@ -6,21 +6,21 @@ Container::Container(int length, int height)
     container.setRectangle(length, height);
 }
 
-bool Container::containerCollision(Rectangle & rec)
+bool Container::containerCollision(Rectangle& rec)
 {
-    return !(container.bottomLeft <= rec.bottomLeft && container.bottomRight.getX() >= rec.bottomRight.getX() && 
+    return !(container.bottomLeft <= rec.bottomLeft && container.bottomRight.getX() >= rec.bottomRight.getX() &&
         container.topLeft.getY() >= rec.topLeft.getY() && container.topRight >= rec.topRight);
 }
 
 
 //Code for coordinate system using top-left coodinates on bounding boxes
-bool Container::boxCollision(Rectangle & a, Rectangle & b)
+bool Container::boxCollision(Rectangle& a, Rectangle& b)
 {
     return (abs((a.getX() + a.getWidth() / 2) - (b.getX() + b.getWidth() / 2)) * 2 < (a.getWidth() + b.getWidth())) &&
         (abs((a.getY() + a.getHeight() / 2) - (b.getY() + b.getHeight() / 2)) * 2 < (a.getHeight() + b.getHeight()));
 }
 
-Rectangle Container::changeCoordsPlacingTop(Rectangle& rec, Rectangle & boxInContainer)
+Rectangle Container::changeCoordsPlacingTop(Rectangle& rec, Rectangle& boxInContainer)
 {
     Rectangle* temp = new Rectangle;
 
@@ -34,7 +34,7 @@ Rectangle Container::changeCoordsPlacingTop(Rectangle& rec, Rectangle & boxInCon
     return *temp;
 }
 
-Rectangle Container::changeCoordsPlacingRHS(Rectangle& rec, Rectangle & boxInContainer)
+Rectangle Container::changeCoordsPlacingRHS(Rectangle& rec, Rectangle& boxInContainer)
 {
     Rectangle* temp = new Rectangle;
 
@@ -49,64 +49,124 @@ Rectangle Container::changeCoordsPlacingRHS(Rectangle& rec, Rectangle & boxInCon
 }
 
 
-void Container::placeInside(const Rectangle& rec)
+void Container::placeInside(std::vector<Rectangle>& Boxes)
 {
-    Rectangle temp = rec;
-    Rectangle temp1 = rec;
-
     if (loadingContainer.size() == 0)
     {
-        loadingContainer.push_back(temp);
-        return;
+        loadingContainer.push_back(Boxes[0]);
     }
 
-    for (int i = (int)loadingContainer.size()-1; i >=0 ; i--)
+    int left = 0, right = (int)loadingContainer.size() - 1, middle = 0;
+
+
+    int i = 0;
+    for (auto box : Boxes)
     {
-        temp1 = changeCoordsPlacingRHS(temp, loadingContainer[i]);
-        if (!boxCollision(temp1, loadingContainer[i]) && !containerCollision(temp1) && isPossiblePlaceOnRightHandSide(temp, loadingContainer[i]))
+        //Rectangle temp = box;
+        Rectangle temp1 = box;
+        bool isPossiblePlaceTop = false;
+        while (left < right)
         {
-            temp = changeCoordsPlacingRHS(temp, loadingContainer[i]);
-            loadingContainer.push_back(temp);
-            return;
+            middle = (left + right) / 2;
+            //Rectangle temp1 = box;
+            temp1 = changeCoordsPlacingRHS(box, loadingContainer[middle]);
+            if (boxCollision(temp1, loadingContainer[middle]) && containerCollision(temp1) && !isPossiblePlaceOnRightHandSide(temp1, loadingContainer[middle]))
+            {
+                right = middle - 1;
+            }
+            else
+                left = middle + 1;
+        }
+
+        temp1 = changeCoordsPlacingRHS(box, loadingContainer[left]);
+        if (!boxCollision(temp1, loadingContainer[left]) && !containerCollision(temp1) && isPossiblePlaceOnRightHandSide(temp1, loadingContainer[left]))
+        {
+            loadingContainer.push_back(temp1);
+            isPossiblePlaceTop = true;
+        }
+
+        /*for (int j = i; j >= 0; j--)
+        {
+            temp1 = changeCoordsPlacingRHS(box, loadingContainer[i]);
+            if (!boxCollision(temp1, loadingContainer[i]) && !containerCollision(temp1) && isPossiblePlaceOnRightHandSide(temp1, loadingContainer[i]))
+            {
+                //temp = changeCoordsPlacingRHS(temp, loadingContainer[i]);
+                loadingContainer.push_back(temp1);
+                i++;
+                isPossiblePlaceTop = true;
+                break;
+            }
+        }*/
+
+        if (isPossiblePlaceTop)
+        {
+            left = 0; right = (int)loadingContainer.size() - 1; middle = 0;
+
+            while (left < right)
+            {
+                middle = (left + right) / 2;
+                temp1 = changeCoordsPlacingTop(box, loadingContainer[middle]);
+                if (boxCollision(temp1, loadingContainer[middle]) && containerCollision(temp1) && !isPossiblePlaceOnTopOfBox(temp1, loadingContainer[middle]))
+                {
+                    right = middle - 1;
+                }
+                else
+                    left = middle + 1;
+            }
+            temp1 = changeCoordsPlacingTop(box, loadingContainer[left]);
+            if (!boxCollision(temp1, loadingContainer[left]) && !containerCollision(temp1) && isPossiblePlaceOnTopOfBox(temp1, loadingContainer[left]))
+            {
+                loadingContainer.push_back(temp1);
+            }
+
+
+           /* for (int j = i; j >= 0; j--)
+            {
+                temp1 = changeCoordsPlacingTop(box, loadingContainer[i]);
+                if (!containerCollision(temp1) && isPossiblePlaceOnTopOfBox(temp1, loadingContainer[i]))
+                {
+                    //temp = changeCoordsPlacingTop(temp, loadingContainer[i]);
+                    loadingContainer.push_back(temp1);
+                    i++;
+                    break;
+                }
+            }*/
         }
     }
-
-
-        for (int i = (int)loadingContainer.size()-1; i >= 0; i--)
-        {
-           temp1 = changeCoordsPlacingTop(temp, loadingContainer[i]);
-            if (!containerCollision(temp1) && isPossiblePlaceOnTopOfBox(temp, loadingContainer[i]))
-            {
-                temp = changeCoordsPlacingTop(temp, loadingContainer[i]);
-                loadingContainer.push_back(temp);
-                return;
-            }
-        }
 
 }
 
 bool Container::isPossiblePlaceOnTopOfBox(Rectangle & rec, Rectangle & boxInContainer)
 {
-    Rectangle temp = changeCoordsPlacingTop(rec, boxInContainer);
-    return (!collisionInsideContainer(temp));
+    //Rectangle temp = changeCoordsPlacingTop(rec, boxInContainer);
+    return (!collisionInsideContainer(rec));
 }
 
 
 bool Container::isPossiblePlaceOnRightHandSide(Rectangle & rec, Rectangle & boxInContainer)
 {
-    Rectangle temp = changeCoordsPlacingRHS(rec, boxInContainer);
-    return (!collisionInsideContainer(temp));
+   // Rectangle temp = changeCoordsPlacingRHS(rec, boxInContainer);
+    return (!collisionInsideContainer(rec));
 }
 
+//Binary search for collision inside container
 bool Container::collisionInsideContainer(Rectangle & rec)
 {
-    for (int i = (int)loadingContainer.size()-1; i >= 0; i--)
+
+    int left = 0, right = (int)loadingContainer.size()-1, middle = 0;
+
+    while (left < right)
     {
-        if (boxCollision(rec, loadingContainer[i]))
-            return true;
+        middle = (left + right) / 2;
+
+        if (boxCollision(rec, loadingContainer[left]))
+            right = middle-1;
+        else
+            left = middle+1;
     }
 
-    return false;
+    return (boxCollision(rec, loadingContainer[left]));
+
 }
 
 
