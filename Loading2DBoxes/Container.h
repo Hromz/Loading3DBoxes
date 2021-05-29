@@ -1,4 +1,6 @@
 #pragma once
+#ifndef CONTAINER_H
+#define CONTAINER_H
 #include "rectangle.h"
 
 
@@ -28,5 +30,5 @@ public:
 
     void print();
     void printCoords();
-    void printBoxes();
 };
+#endif 

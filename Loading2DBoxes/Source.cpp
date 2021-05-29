@@ -4,9 +4,10 @@
 
 using namespace std;
 
-int main()
+
+int main(int argc, char** argv)
 {
-    int length = 134000, height = 25000;
+    int length = 150, height = 150;
    /* cout << "Enter 2D size of container\n";
     cout << "Length: "; cin >> length;
     cout << "Height: "; cin >> height;*/
@@ -19,7 +20,7 @@ int main()
    // Rectangle temp(tl, tr, bl, br);
     Container cont(length, height);
 
-    int quantity = 600000, boxLength = 3, boxHeight = 4;
+    int quantity = 25, boxLength = 4, boxHeight = 3;
    /* cout << "Enter 2D box quantity: "; cin >> quantity;
     cout << "Length: "; cin >> boxLength;
     cout << "Height: "; cin >> boxHeight;*/
@@ -29,7 +30,6 @@ int main()
     cont.placeInside(boxes);
 
     cont.printCoords();
-    //cont.printBoxes();
 
     return 0;
 }

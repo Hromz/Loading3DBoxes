@@ -54,10 +54,10 @@ void Container::placeInside(std::vector<Rectangle>& Boxes)
     if (loadingContainer.size() == 0)
     {
         loadingContainer.push_back(Boxes[0]);
+        Boxes.erase(Boxes.begin());
     }
 
     int left = 0, right = (int)loadingContainer.size() - 1, middle = 0;
-
 
     int i = 0;
     for (auto box : Boxes)
@@ -98,7 +98,7 @@ void Container::placeInside(std::vector<Rectangle>& Boxes)
             }
         }*/
 
-        if (isPossiblePlaceTop)
+        if (!isPossiblePlaceTop)
         {
             left = 0; right = (int)loadingContainer.size() - 1; middle = 0;
 
@@ -113,6 +113,7 @@ void Container::placeInside(std::vector<Rectangle>& Boxes)
                 else
                     left = middle + 1;
             }
+
             temp1 = changeCoordsPlacingTop(box, loadingContainer[left]);
             if (!boxCollision(temp1, loadingContainer[left]) && !containerCollision(temp1) && isPossiblePlaceOnTopOfBox(temp1, loadingContainer[left]))
             {
@@ -170,39 +171,6 @@ bool Container::collisionInsideContainer(Rectangle & rec)
 }
 
 
-void Container::print()
-{
-    using std::cout;
-    for (int j = (int)container.topRight.getY() + 1; j >= 0; j--)
-    {
-        if (j == 0 || j == (int)container.topRight.getY() + 1)
-        {
-            for (int i = 0; i < (int)container.topRight.getX() + 1; i++)
-            {
-                cout << '@';
-            }
-            cout << "\n";
-        }
-        else
-        {
-            for (int i = 0; i < (int)container.topRight.getX() + 1; i++)
-            {
-                if (i == 0 || i == (int)container.topRight.getX())
-                    cout << '@';
-                else
-                {
-                    
-                    cout << ' ';
-                }
-
-            }
-            cout << "\n";
-        }
-    }
-
-
-}
-
 
 void Container::printCoords()
 {
@@ -217,33 +185,3 @@ void Container::printCoords()
     }
 }
 
-
-void Container::printBoxes()
-{
-    int boxNumber = 1;
-
-   
-        for (int x = container.getWidth(); x >= 0; x--)
-        {
-            for (int y = (int)container.getWidth(); y >= 0; y--)
-            {
-                for (int i = 0; i < (int)loadingContainer.size(); i++)
-                {
-                    if ((x >= loadingContainer[i].bottomLeft.getX() && x <= loadingContainer[i].bottomRight.getX() &&
-                        y >= loadingContainer[i].bottomLeft.getY() && y <= loadingContainer[i].bottomRight.getY()) ||
-                        (x >= loadingContainer[i].topLeft.getX() && x <= loadingContainer[i].topRight.getX()) &&
-                        y >= loadingContainer[i].topLeft.getY() && y <= loadingContainer[i].topRight.getY())
-                        std::cout << '*';
-                    else if ((y == loadingContainer[i].bottomLeft.getY() || y == loadingContainer[i].bottomRight.getY()))
-                        std::cout << '*';
-                    else if (x == loadingContainer[i].bottomLeft.getX() / 2 && y == loadingContainer[i].bottomLeft.getY() / 2)
-                    {
-                        std::cout << boxNumber;
-                        boxNumber++;
-                    }
-                }
-
-            }
-            std::cout << '\n';
-        }
-}
