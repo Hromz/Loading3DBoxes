@@ -1,9 +1,9 @@
 #include "Container.h"
 
 
-Container::Container(int length, int height)
+Container::Container(int length, int height, int width)
 {
-    container.setRectangle(length, height);
+    container.setRectangle(length, height, width);
 }
 
 bool Container::containerCollision(Rectangle& rec)
@@ -137,14 +137,14 @@ void Container::placeInside(std::vector<Rectangle>& Boxes)
 
 }
 
-bool Container::isPossiblePlaceOnTopOfBox(Rectangle & rec, Rectangle & boxInContainer)
+bool Container::isPossiblePlaceOnTopOfBox(Rectangle & rec)//, Rectangle & boxInContainer)
 {
     //Rectangle temp = changeCoordsPlacingTop(rec, boxInContainer);
     return (!collisionInsideContainer(rec));
 }
 
 
-bool Container::isPossiblePlaceOnRightHandSide(Rectangle & rec, Rectangle & boxInContainer)
+bool Container::isPossiblePlaceOnRightHandSide(Rectangle & rec)//, Rectangle & boxInContainer)
 {
    // Rectangle temp = changeCoordsPlacingRHS(rec, boxInContainer);
     return (!collisionInsideContainer(rec));

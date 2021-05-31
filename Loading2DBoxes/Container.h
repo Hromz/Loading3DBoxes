@@ -11,7 +11,7 @@ private:
     std::vector<Rectangle> loadingContainer;
 public:
     Container() {};
-    Container(int length, int height);
+    Container(int length, int height, int width);
     ~Container() {};
 
     std::vector<Rectangle> boxesToBeLoaded;
@@ -24,11 +24,11 @@ public:
     Rectangle changeCoordsPlacingTop(Rectangle& rec, Rectangle & cont);
     Rectangle changeCoordsPlacingRHS(Rectangle& rec, Rectangle & cont);
 
-    bool isPossiblePlaceOnTopOfBox(Rectangle& rec, Rectangle & cont);
-    bool isPossiblePlaceOnRightHandSide(Rectangle& rec, Rectangle & cont);
+    bool isPossiblePlaceOnTopOfBox(Rectangle& rec);//, Rectangle & cont);
+    bool isPossiblePlaceOnRightHandSide(Rectangle& rec);//, Rectangle & cont);
 
 
-    void print();
+    //void print();
     void printCoords();
 };
 #endif 
