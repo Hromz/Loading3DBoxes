@@ -1,9 +1,9 @@
+#ifndef RECTANGLE_H
+#define RECTANGLE_H
 #include "coords.h"
 #include <vector>
 #include <utility>
 #include <iostream>
-#ifndef RECTANGLE_H
-#define RECTANGLE_H
 
 class Rectangle : Coords
 {

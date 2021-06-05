@@ -21,11 +21,15 @@ public:
     bool boxCollision(Rectangle & rec, Rectangle & boxInContainer);
     void placeInside(std::vector<Rectangle> & Boxes);
 
+    //Searching place where to palce box inside container
     Rectangle changeCoordsPlacingTop(Rectangle& rec, Rectangle & cont);
     Rectangle changeCoordsPlacingRHS(Rectangle& rec, Rectangle & cont);
+    Rectangle changeCoordsPlacingFront(Rectangle& rec, Rectangle& cont);
 
     bool isPossiblePlaceOnTopOfBox(Rectangle& rec);//, Rectangle & cont);
     bool isPossiblePlaceOnRightHandSide(Rectangle& rec);//, Rectangle & cont);
+    bool isPossiblePlaceInfront(Rectangle & rec);
+
 
 
     //void print();
