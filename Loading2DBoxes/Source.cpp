@@ -20,7 +20,7 @@ int main(int argc, char** argv)
    // Rectangle temp(tl, tr, bl, br);
     Container cont(length, height, width);
 
-    int quantity = 25, boxLength = 4, boxHeight = 3, boxWidth = 4;
+    int quantity = 6, boxLength = 4, boxHeight = 3, boxWidth = 4;
    /* cout << "Enter 2D box quantity: "; cin >> quantity;
     cout << "Length: "; cin >> boxLength;
     cout << "Height: "; cin >> boxHeight;*/

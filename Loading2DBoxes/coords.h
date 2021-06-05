@@ -19,6 +19,10 @@ public:
     void setY(int y) { this->y = y; }
     void setZ(int z) { this->z = z; }
 
+    void moveLengthCoordinate(int x) { this->x += x; }
+    void moveHeightCoordinate(int y) { this->y += y; }
+    void moveWidthCoordinate(int z) { this->z += z; }
+
     void resize(const Coords& c);
     void setCoords(int length, int width, int height) { x = length, y = height, z = width; }
 
