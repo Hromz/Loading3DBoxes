@@ -24,7 +24,7 @@ public:
     void moveWidthCoordinate(int z) { this->z += z; }
 
     void resize(const Coords& c);
-    void setCoords(int length, int width, int height) { x = length, y = height, z = width; }
+    void setCoords(int length, int height, int width) { x = length, y = height, z = width; }
 
     Coords operator +(const Coords & c1)
     {
@@ -33,6 +33,15 @@ public:
         temp->y = y + c1.y;
         temp->z = z + c1.z;
         return *temp;
+    }
+
+    Coords operator +=(const Coords& c1)
+    {
+        
+         x += c1.x;
+         y += c1.y;
+         z += c1.z;
+        return *this;
     }
 
     Coords operator -(const Coords& c1)
@@ -45,8 +54,7 @@ public:
     }
 
     Coords operator =(const Coords& c1)
-    {
-        
+    {       
         x = c1.x;
         y = c1.y;
         z = c1.z;

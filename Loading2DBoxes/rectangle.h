@@ -9,16 +9,16 @@ class Rectangle : Coords
 {
 public:
     //Left side of 3D box
-    Coords topLeft;
-    Coords bottomLeft;
-    Coords topRight;
-    Coords bottomRight;
+    Coords topLeftLHS;
+    Coords bottomLeftLHS;
+    Coords topRightLHS;
+    Coords bottomRightLHS;
 
     //Right side of 3D box
-    Coords topLeftRight;
-    Coords bottomLeftRight;
-    Coords topRightRight;
-    Coords bottomRightRight;
+    Coords topLeftRHS;
+    Coords bottomLeftRHS;
+    Coords topRightRHS;
+    Coords bottomRightRHS;
 
     Rectangle() {};
     Rectangle(const Rectangle& rec);
@@ -26,31 +26,32 @@ public:
     Rectangle(int length,int height, int width);
     ~Rectangle() { };
 
-    Coords getTopLeft() { return topLeft; }
-    Coords getTopRight() { return topRight; }
-    Coords getBottomLeft() { return bottomLeft; }
-    Coords getBottomRight() { return bottomRight; }
+    Coords gettopLeftLHS() { return topLeftLHS; }
+    Coords getTopRight() { return topRightLHS; }
+    Coords getBottomLeft() { return bottomLeftLHS; }
+    Coords getBottomRight() { return bottomRightLHS; }
 
-    int getLength(){ return topRight.getX() - topLeft.getX(); }
-    int getHeight() { return topRight.getY() - bottomRight.getY(); }
-    int getWidth() { return topRight.getZ() -  topRightRight.getZ(); }
+    int getLength(){ return bottomRightLHS.getX() - bottomLeftLHS.getX(); }
+    int getHeight() { return topRightLHS.getY() - bottomRightLHS.getY(); }
+    int getWidth() { return topRightRHS.getZ() - topRightLHS.getZ(); }
 
-    int getX() { return topRight.getX(); }
-    int getY() { return topRight.getY(); }
-    int getZ() { return topRightRight.getZ(); }
+    int getX() { return topRightLHS.getX(); }
+    int getY() { return topRightLHS.getY(); }
+    int getZ() { return topRightRHS.getZ(); }
 
-    void setTopLeft(Coords coords) { topLeft = coords; }
-    void setTopRight(Coords coords) { topRight = coords; }
-    void setBottomLeft(Coords coords) { bottomLeft = coords; }
-    void setBottomRight(Coords coords) { bottomRight = coords; }
+    void settopLeftLHS(Coords & coords) { topLeftLHS = coords; }
+    void setTopRight(Coords & coords) { topRightLHS = coords; }
+    void setBottomLeft(Coords & coords) { bottomLeftLHS = coords; }
+    void setBottomRight(Coords & coords) { bottomRightLHS = coords; }
 
-    void setTopLeftRight(Coords coords) { topLeftRight = coords; }
-    void setTtopRightRight(Coords coords) { topRightRight = coords; }
-    void setBottomLeftRight(Coords coords) { bottomLeftRight = coords; }
-    void setBottomRightRight(Coords coords) { bottomRightRight = coords; }
+    void setTopLeftLHS(Coords & coords) { topLeftLHS = coords; }
+    void setTopRightRight(Coords & coords) { topRightRHS = coords; }
+    void setBottomLeftRight(Coords & coords) { bottomLeftRHS = coords; }
+    void setBottomRightRight(Coords & coords) { bottomRightRHS = coords; }
 
     // length - x, height - y, width - z
     void setRectangle(int length,int height, int width);
+
 };
 
 #endif // RECTANGLE_H

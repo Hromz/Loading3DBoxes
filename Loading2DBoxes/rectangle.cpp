@@ -2,48 +2,53 @@
 
 Rectangle::Rectangle(const Rectangle& rec)
 {
-    this->topLeft = rec.topLeft;
-    this->bottomLeft = rec.bottomLeft;
-    this->topRight = rec.topRight;
-    this->bottomRight = rec.bottomRight;
+    this->topLeftLHS = rec.topLeftLHS;
+    this->bottomLeftLHS = rec.bottomLeftLHS;
+    this->topRightLHS = rec.topRightLHS;
+    this->bottomRightLHS = rec.bottomRightLHS;
 
-    this->topLeftRight = rec.topLeftRight;
-    this->bottomLeftRight = rec.bottomLeftRight;
-    this->topRightRight = rec.topRightRight;
-    this->bottomRightRight = rec.bottomRightRight;
+    this->topLeftRHS = rec.topLeftRHS;
+    this->bottomLeftRHS = rec.bottomLeftRHS;
+    this->topRightRHS = rec.topRightRHS;
+    this->bottomRightRHS = rec.bottomRightRHS;
 }
 
 Rectangle::Rectangle(Coords& tl, Coords& tr, Coords& bl, Coords& br, Coords & tlr, Coords& tpr, Coords& blr, Coords& brr)
 {
-    topLeft = tl;
-    topRight = tr;
-    bottomLeft = bl;
-    bottomRight = br;
+    topLeftLHS = tl;
+    topRightLHS = tr;
+    bottomLeftLHS = bl;
+    bottomRightLHS = br;
 
-    topLeftRight = tlr;
-    bottomLeftRight = blr;
-    topRightRight = tpr;
-    bottomRightRight = brr;
+    topLeftRHS = tlr;
+    bottomLeftRHS = blr;
+    topRightRHS = tpr;
+    bottomRightRHS = brr;
 }
 
-Rectangle::Rectangle(int length,int width, int height)
+Rectangle::Rectangle(int length, int height,int width)
 {
-    topLeft.setCoords(0, height, 0);
-    topRight.setCoords(length, height, 0);
-    bottomLeft.setCoords(0, 0, 0);
-    bottomRight.setCoords(length, 0, 0);
+    topLeftLHS.setCoords(0, height, 0);
+    topRightLHS.setCoords(length, height, 0);
+    bottomLeftLHS.setCoords(0, 0, 0);
+    bottomRightLHS.setCoords(length, 0, 0);
+
+    topLeftRHS.setCoords(0, height, width);
+    topRightRHS.setCoords(length, height, width);
+    bottomLeftRHS.setCoords(0, 0, width);
+    bottomRightRHS.setCoords(length, 0, width);
 }
 
 // length - x, height - y, width - z
 void Rectangle::setRectangle(int length,int height, int width)
 {
-    topLeft.setCoords(0, height, 0);
-    topRight.setCoords(length, height, 0);
-    bottomLeft.setCoords(0, 0, 0);
-    bottomRight.setCoords(length, 0, 0);
+    topLeftLHS.setCoords(0, height, 0);
+    topRightLHS.setCoords(length, height, 0);
+    bottomLeftLHS.setCoords(0, 0, 0);
+    bottomRightLHS.setCoords(length, 0, 0);
 
-    topLeftRight.setCoords(0, height, width);
-    bottomLeftRight.setCoords(0, 0, width);
-    topRightRight.setCoords(length, height, width);
-    bottomRightRight.setCoords(length, 0, width);
+    topLeftRHS.setCoords(0, height, width);
+    bottomLeftRHS.setCoords(0, 0, width);
+    topRightRHS.setCoords(length, height, width);
+    bottomRightRHS.setCoords(length, 0, width);
 }
