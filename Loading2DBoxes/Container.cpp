@@ -1,5 +1,5 @@
 #include "Container.h"
-
+#include <algorithm>
 
 Container::Container(int length, int height, int width)
 {
@@ -9,7 +9,6 @@ Container::Container(int length, int height, int width)
 bool Container::containerCollision(Rectangle& rec)
 {
     return !(container.getX() >= rec.getX() && container.getY() >= rec.getY() && container.getZ() >= rec.getZ());
-
 }
 
 
@@ -125,14 +124,13 @@ void Container::placeInside(std::vector<Rectangle>& Boxes)
         while (left < right)
         {
             middle = (left + right) / 2;
-
             temp1 = changeCoordsPlacingRHS(box, loadingContainer[middle]);
-            if (boxCollision(temp1, loadingContainer[middle]) && containerCollision(temp1) && !isPossiblePlaceOnRightHandSide(temp1))
+            if (!boxCollision(temp1, loadingContainer[middle]) && !containerCollision(temp1) && !isPossiblePlaceOnRightHandSide(temp1))
             {
-                right = middle - 1;
+                left = middle + 1;
             }
             else
-                left = middle + 1;
+                right--;
         }
 
         temp1 = changeCoordsPlacingRHS(box, loadingContainer[left]);
@@ -150,13 +148,13 @@ void Container::placeInside(std::vector<Rectangle>& Boxes)
             while (left < right)
             {
                 middle = (left + right) / 2;
-                temp1 = changeCoordsPlacingTop(box, loadingContainer[middle]);
-                if (boxCollision(temp1, loadingContainer[middle]) && containerCollision(temp1) && !isPossiblePlaceOnTopOfBox(temp1))
+                temp1 = changeCoordsPlacingTop(box, loadingContainer[middle]); 
+                if (!boxCollision(temp1, loadingContainer[middle]) && !containerCollision(temp1) && !isPossiblePlaceOnTopOfBox(temp1))
                 {
-                    right = middle - 1;
+                    left = middle + 1;
                 }
                 else
-                    left = middle + 1;
+                    right--;
             }
 
             temp1 = changeCoordsPlacingTop(box, loadingContainer[left]);
@@ -177,12 +175,13 @@ void Container::placeInside(std::vector<Rectangle>& Boxes)
             {
                 middle = (left + right) / 2;
                 temp1 = changeCoordsPlacingFront(box, loadingContainer[middle]);
-                if (boxCollision(temp1, loadingContainer[middle]) && containerCollision(temp1) && !isPossiblePlaceInfront(temp1))
+                if (!boxCollision(temp1, loadingContainer[middle]) && !containerCollision(temp1) && !isPossiblePlaceInfront(temp1))
                 {
-                    right = middle - 1;
+                    left = middle + 1;
                 }
                 else
-                    left = middle + 1;
+                    right--;
+
             }
 
             temp1 = changeCoordsPlacingFront(box, loadingContainer[left]);
@@ -196,7 +195,6 @@ void Container::placeInside(std::vector<Rectangle>& Boxes)
 
 }
 
-
 bool Container::isPossiblePlaceInfront(Rectangle& rec)
 {
     return (!collisionInsideContainer(rec));
@@ -206,7 +204,6 @@ bool Container::isPossiblePlaceOnTopOfBox(Rectangle & rec)
 {
     return (!collisionInsideContainer(rec));
 }
-
 
 bool Container::isPossiblePlaceOnRightHandSide(Rectangle & rec)
 {
@@ -218,18 +215,23 @@ bool Container::collisionInsideContainer(Rectangle & rec)
 {
 
     int left = 0, right = (int)loadingContainer.size()-1, middle = 0;
-
-    while (left < right)
+    for (auto box : loadingContainer) {
+        if (boxCollision(rec, box))
+        return true;
+    }
+   /*while (left < right)
     {
         middle = (left + right) / 2;
 
-        if (boxCollision(rec, loadingContainer[left]))
-            right = middle-1;
+        if (!boxCollision(rec, loadingContainer[left]))
+        {
+            left = middle + 1;
+        }
         else
-            left = middle+1;
-    }
+            right--;
+    }*/
 
-    return (boxCollision(rec, loadingContainer[left]));
+    return false;//(boxCollision(rec, loadingContainer[left]));
 
 }
 
@@ -257,3 +259,63 @@ void Container::printCoords()
     cout << loadingContainer.size() << " boxes were loaded!\n";
 }
 
+
+int Container::getQuanAlongSide(int side1, side2){
+
+    return (container.getLength() / side1) * (container.getWidth() / side2);
+}
+
+void Container::setOptimalLoadingMap(int length, int width, int height) {
+    struct boxHoarding {
+        int height;
+        int qty;
+    };
+
+    std::vector<boxHoarding> boxes;
+    std::vector<std::pair<int, std::vector<boxHoarding>> dp(container.getHeight());
+
+    boxes.push_back(boxHoarding{ height, getQuanAlongSide(length, width) });
+    boxes.push_back(boxHoarding{ height, getQuanAlongSide(width, length)});
+    boxes.push_back(boxHoarding{ length, getQuanAlongSide(height, width) });
+    boxes.push_back(boxHoarding{ length, getQuanAlongSide(width, height) });
+    boxes.push_back(boxHoarding{ width, getQuanAlongSide(height, length) });
+    boxes.push_back(boxHoarding{ length, getQuanAlongSide(length, height) });
+
+    for (int i = 0; i <= container.getHeight(); i++) {
+        for (auto box : boxes) {
+            if (i - box.height >= 0) {
+                dp[i] = max(dp[i], box.qty + dp[i - box.height].qty);
+            }
+        }
+    }
+   
+
+}
+
+
+void Container::setOptimalLoading(int & length, int& width, int & height)
+{
+
+    /*int maxQuanByLength = std::min(std::min(container.getLength() / length, container.getLength() / width), container.getLength() / height);
+    int maxQuanByWidth = std::min(std::min(container.getWidth() / length, container.getWidth() / width), container.getWidth() / height);
+    int maxQuanByHeight = std::min(std::min(container.getHeight() / length, container.getHeight() / width), container.getHeight()/ height);
+
+    if (maxQuanByLength <= maxQuanByWidth && maxQuanByLength <= maxQuanByHeight) {
+    }
+    else if (maxQuanByWidth <= maxQuanByLength && maxQuanByWidth <= maxQuanByHeight){
+        if (height <= length) {
+            std::swap(width, height);
+        }else {
+            std::swap(width, length);
+            if (width <= length)
+                std::swap(width, length);
+        }
+    }
+    else if (maxQuanByHeight <= maxQuanByLength && maxQuanByHeight <= maxQuanByWidth){
+        if (width <= length) {
+            std::swap(height, width);
+        }else {
+            std::swap(height, length);
+        }
+    }*/
+}

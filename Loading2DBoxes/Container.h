@@ -3,11 +3,11 @@
 #define CONTAINER_H
 #include "rectangle.h"
 
-
 class Container : Rectangle
 {
 private:
     Rectangle container;
+    std::vector<std::vector<Rectangle>> loadingMap;
     std::vector<Rectangle> loadingContainer;
 public:
     Container() {};
@@ -30,9 +30,10 @@ public:
     bool isPossiblePlaceOnRightHandSide(Rectangle& rec);//, Rectangle & cont);
     bool isPossiblePlaceInfront(Rectangle & rec);
 
-
-
     //void print();
+    int getQuanAlongSide(int side1, side2);
+    void setOptimalLoading(int& length, int& width, int& height);
+    void setOptimalLoadingMap(int length, int width, int height);
     void printCoords();
 };
 #endif 

@@ -51,7 +51,6 @@ public:
 
     // length - x, height - y, width - z
     void setRectangle(int length,int height, int width);
-
 };
 
 #endif // RECTANGLE_H
