@@ -260,7 +260,7 @@ void Container::printCoords()
 }
 
 
-int Container::getQuanAlongSide(int side1, side2){
+int Container::getQuanAlongSide(int side1, int side2){
 
     return (container.getLength() / side1) * (container.getWidth() / side2);
 }
@@ -272,24 +272,38 @@ void Container::setOptimalLoadingMap(int length, int width, int height) {
     };
 
     std::vector<boxHoarding> boxes;
-    std::vector<std::pair<int, std::vector<boxHoarding>> dp(container.getHeight());
+    std::vector<int> dp(container.getHeight()+1, INT_MIN);
+    dp[0] = 0;
 
     boxes.push_back(boxHoarding{ height, getQuanAlongSide(length, width) });
     boxes.push_back(boxHoarding{ height, getQuanAlongSide(width, length)});
     boxes.push_back(boxHoarding{ length, getQuanAlongSide(height, width) });
     boxes.push_back(boxHoarding{ length, getQuanAlongSide(width, height) });
     boxes.push_back(boxHoarding{ width, getQuanAlongSide(height, length) });
-    boxes.push_back(boxHoarding{ length, getQuanAlongSide(length, height) });
+    boxes.push_back(boxHoarding{ width, getQuanAlongSide(length, height) });
 
+    int totalLoadingHeight = 0;
     for (int i = 0; i <= container.getHeight(); i++) {
         for (auto box : boxes) {
-            if (i - box.height >= 0) {
-                dp[i] = max(dp[i], box.qty + dp[i - box.height].qty);
+            if (i - box.height >= 0 && dp[i- box.height] != INT_MIN) {
+                dp[i] < dp[i - box.height] + box.qty ? totalLoadingHeight = i : totalLoadingHeight = totalLoadingHeight;
+                dp[i] = std::max(dp[i], box.qty + dp[i - box.height]);
             }
         }
+        
     }
-   
+    int totalQuantity = 0;
 
+    //Restoring best loading option for placing inside loading container via coordinates
+    for (int i = totalLoadingHeight; i > 0;) {
+        for(auto box : boxes)
+        if (i - box.height >= 0 && dp[i - box.height] != INT_MIN && dp[i] - box.qty == dp[i-box.height]) {
+           std::cout << "At length " << i << " " << box.qty << " boxes were loaded" << " height of box hoarding is " << box.height<<'\n';
+           totalQuantity += box.qty;
+           i -= box.height;
+        }
+    }
+    std::cout << totalQuantity << " boxes were loaded!\n";
 }
 
 

@@ -23,9 +23,10 @@ int main()
     cout << "Height: "; cin >> boxHeight;*/
 
    // cont.setOptimalLoading(boxLength, boxHeight, boxWidth);
+    cont.setOptimalLoadingMap(boxLength, boxWidth, boxHeight);
     std::vector<Rectangle> boxes(quantity, Rectangle(boxLength, boxHeight, boxWidth));
     
-    cont.placeInside(boxes);
+    //cont.placeInside(boxes);
 
     cont.printCoords();
 

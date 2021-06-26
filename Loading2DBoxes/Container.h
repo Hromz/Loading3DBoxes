@@ -31,7 +31,7 @@ public:
     bool isPossiblePlaceInfront(Rectangle & rec);
 
     //void print();
-    int getQuanAlongSide(int side1, side2);
+    int getQuanAlongSide(int side1, int side2);
     void setOptimalLoading(int& length, int& width, int& height);
     void setOptimalLoadingMap(int length, int width, int height);
     void printCoords();
