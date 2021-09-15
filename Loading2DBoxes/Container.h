@@ -2,38 +2,78 @@
 #ifndef CONTAINER_H
 #define CONTAINER_H
 #include "rectangle.h"
+#include <map>
+#include <queue>
+#include <algorithm>
+#include <functional>
+#include "N-AryTree.h"
+#include <random>
 
 class Container : Rectangle
 {
-private:
-    Rectangle container;
-    std::vector<std::vector<Rectangle>> loadingMap;
-    std::vector<Rectangle> loadingContainer;
+private:  
+    
 public:
+    std::vector<Rectangle> loadingContainer;
+    Rectangle container;
+    std::vector<Rectangle> boxesToBeLoaded;
+
+    double loadedVolume;
+
+    void setLoadedVolume(double vol) { loadedVolume = vol; }
+    double getLoadedVolume() { return loadedVolume; }
+
     Container() {};
     Container(int length, int height, int width);
     ~Container() {};
 
-    std::vector<Rectangle> boxesToBeLoaded;
+    int getLoadedQuan() { return (int)loadingContainer.size(); }
+    typedef void (Container::* placer)(Rectangle& rec);
+    placer place[6];
 
+    typedef bool(Container::* checker)(Rectangle& rec);
+    checker check[6];
+
+    void loadBoxes(std::vector<Rectangle> & boxes);
+    void generateBottomBox(std::vector<Rectangle>& temp);
     bool containerCollision(Rectangle& rec);
-    bool collisionInsideContainer(Rectangle & rec);
-    bool boxCollision(Rectangle & rec, Rectangle & boxInContainer);
+    bool collisionInsideContainer(Rectangle & rec, int pos);
+    bool noCollision(Rectangle & rec, Rectangle & boxInContainer);
     void placeInside(std::vector<Rectangle> & Boxes);
+    bool isFull(Rectangle & rec);
+    void Insert(Rectangle & rec);
+    std::vector<Rectangle> getConainer() { return loadingContainer; }
 
-    //Searching place where to palce box inside container
+
     Rectangle changeCoordsPlacingTop(Rectangle& rec, Rectangle & cont);
     Rectangle changeCoordsPlacingRHS(Rectangle& rec, Rectangle & cont);
     Rectangle changeCoordsPlacingFront(Rectangle& rec, Rectangle& cont);
 
-    bool isPossiblePlaceOnTopOfBox(Rectangle& rec);//, Rectangle & cont);
-    bool isPossiblePlaceOnRightHandSide(Rectangle& rec);//, Rectangle & cont);
-    bool isPossiblePlaceInfront(Rectangle & rec);
+    bool isLoadingCorrect();
 
-    //void print();
+    void sortBoxes(std::vector<Rectangle> & boxes);
     int getQuanAlongSide(int side1, int side2);
-    void setOptimalLoading(int& length, int& width, int& height);
     void setOptimalLoadingMap(int length, int width, int height);
     void printCoords();
+
+    Rectangle binarySearchRHS(Rectangle& rec, bool & flag);
+    Rectangle binarySearchTop(Rectangle& rec, bool & flag);
+    Rectangle binarySearchFront(Rectangle& rec, bool & flag);
+
+    void bruteForce_Loading(Rectangle& rec, bool & flag);
+
+    void bs_RF(Rectangle& rec);
+    void bs_RU(Rectangle& rec);
+    void bs_UF(Rectangle& rec);
+    void bs_UR(Rectangle& rec);
+    void bs_FR(Rectangle& rec);
+    void bs_FU(Rectangle& rec);
+
+    bool isFull_RF(Rectangle& rec);
+    bool isFull_RU(Rectangle& rec);
+    bool isFull_UF(Rectangle& rec);
+    bool isFull_UR(Rectangle& rec);
+    bool isFull_FR(Rectangle& rec);
+    bool isFull_FU(Rectangle& rec);
 };
 #endif 
