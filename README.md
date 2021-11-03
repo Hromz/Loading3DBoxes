@@ -1,4 +1,4 @@
-# Loading2DBoxes
+# Loading3DBoxes
 Loading boxes into container.
 This is my pet project that still in development.
 Requires user to input quantity and box dimensions. After that calculates optimal box loading and print graphical representation of loading in the container.
