@@ -8,11 +8,11 @@ using namespace std::chrono;
 
 int main()
 {
-    int test = 2;
+    int test = 250;
     double temp = 2;
     using std::cout;
     using std::cin;
-    int length = 360, height = 160, width = 140;
+    int length = 360, height = 170, width = 150;
     double carCube = ((double)length / 100.0) * ((double)width / 100.0) * ((double)height / 100.0);
 
     int wrong = 0, right = 0;
@@ -28,10 +28,10 @@ int main()
 
         int totalQuan = 0;
         double orderCube = 0;
-        int qBox = 15;
+        int qBox = 9;
         std::vector<Rectangle> boxes;
         while (qBox--) {
-            int quantity = rand() % 45 + 10, boxLength = rand() % 70 + 15, boxHeight = rand() % 50 + 15, boxWidth = rand() % 50 + 15;
+            int quantity = rand() % 45 + 20, boxLength = rand() % 40 + 15, boxHeight = rand() % 40 + 15, boxWidth = rand() % 40 + 15;
 
             for (int i = 0; i < quantity; i++) {
                 boxes.push_back(Rectangle(boxLength, boxHeight, boxWidth));

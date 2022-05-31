@@ -152,7 +152,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Container.h" />
-    <ClInclude Include="ContainerLoader.h" />
     <ClInclude Include="coords.h" />
     <ClInclude Include="Header.h" />
     <ClInclude Include="N-AryTree.h" />

@@ -44,6 +44,8 @@ public:
     void Insert(Rectangle & rec);
     std::vector<Rectangle> getConainer() { return loadingContainer; }
 
+    std::vector<std::pair<Rectangle, int>> merge_boxes(std::vector<std::pair<Rectangle, int>>& vec);
+
 
     Rectangle changeCoordsPlacingTop(Rectangle& rec, Rectangle & cont);
     Rectangle changeCoordsPlacingRHS(Rectangle& rec, Rectangle & cont);

@@ -628,6 +628,21 @@ void Container::bruteForce_Loading(Rectangle& rec, bool & flag) {
    
 }
 
+std::vector<std::pair<Rectangle, int>> Container::merge_boxes(std::vector<std::pair<Rectangle, int>>& boxes) {
+    std::vector<std::pair<Rectangle, int>> ans;
+
+    for (auto r : boxes) {
+        Rectangle temp(r.first.getLength(), r.first.getHeight(), r.first.getWidth() * 2);
+        
+        int qty = r.second / 2;
+        int left_qty = r.second % 2;
+
+        if (qty > 0) ans.push_back({ temp, qty });
+        if (left_qty > 0) ans.push_back({ r.first, left_qty });
+    }
+    return ans;
+}
+
 void Container::loadBoxes(std::vector<Rectangle>& boxes) {
    struct CMP_SORT {
        bool operator() (const std::tuple<int, int, int> t1, const std::tuple<int, int, int> t2) const {
@@ -651,19 +666,21 @@ void Container::loadBoxes(std::vector<Rectangle>& boxes) {
    }
 
     int maxBoxes = 0;
-    int n = 1;
-    std::vector<Container> containers(n);
-        for (int i = 0; i < n; i++) {
+
+    std::vector<Container> containers(1);
+        for (int i = 0; i < 1; i++) {
             int l = container.getLength(), h = container.getHeight(), w = container.getWidth();
             Container temp(l, h, w);
             containers[i] = temp;
         }
+  
 
-    std::vector<std::vector<Rectangle>> unusedBoxes(n);
+     boxesForLoading = merge_boxes(boxesForLoading);
+    std::vector<std::vector<Rectangle>> unusedBoxes(1);
 
 
     sort(boxesForLoading.begin(), boxesForLoading.end(), [](std::pair<Rectangle, int>& rec1, std::pair<Rectangle, int>& rec2) {
-        return rec1.first.getCube() < rec2.first.getCube();
+        return rec1.second > rec2.second;
      });
 
     int contIndex = 0;
@@ -684,7 +701,7 @@ void Container::loadBoxes(std::vector<Rectangle>& boxes) {
                 }
                 else {
                     for(int i = 0; i < q; i++)
-                    unusedBoxes[contIndex].push_back(box.first);
+                      unusedBoxes[contIndex].push_back(box.first);
                     break;
                 }
             }
@@ -696,8 +713,8 @@ void Container::loadBoxes(std::vector<Rectangle>& boxes) {
 
     int i = 0; int j = 0; double cubes = 0, ans = 0; int row = 0;
 
-        for (auto& cont : containers) {
-            cubes = 0;
+        /*for (auto& cont : containers) {
+            //cubes = 0;
             for (int k = 0; k < (int)cont.loadingContainer.size(); k++) {
                 cubes += ((double)cont.loadingContainer[k].getCube() / 1000000.0);
             }
@@ -707,8 +724,8 @@ void Container::loadBoxes(std::vector<Rectangle>& boxes) {
                 i = j;
             }
             j++;
-        }
-        cubes = 0;
+        }*/
+        //cubes = 0;
 
         if(unusedBoxes[i].size() > 0)
         sort(unusedBoxes[i].begin(), unusedBoxes[i].end(), [](Rectangle& rec1, Rectangle& rec2) {

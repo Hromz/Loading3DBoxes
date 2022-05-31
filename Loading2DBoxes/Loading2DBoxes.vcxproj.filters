@@ -41,9 +41,6 @@
     <ClInclude Include="Header.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="ContainerLoader.h">
-      <Filter>Исходные файлы</Filter>
-    </ClInclude>
     <ClInclude Include="N-AryTree.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
