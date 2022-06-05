@@ -36,12 +36,10 @@ bool Container::noCollision(Rectangle& a, Rectangle& b)
     return false;
 /* return (a.getMinX() >= b.getMaxX() || b.getMinX() >= a.getMaxX() ||
             a.getMinY() >= b.getMaxY() || b.getMinY() >= a.getMaxY() ||
-            a.getMinZ() >= b.getMaxZ() || b.getMinZ() >= a.getMaxZ());
-   /* return (abs((a.getX() + a.getLength() / 2) - (b.getX() + b.getLength() / 2)) * 2 < (a.getLength() + b.getLength()) &&
+            a.getMinZ() >= b.getMaxZ() || b.getMinZ() >= a.getMaxZ());*/
+   /*return !(abs((a.getX() + a.getLength() / 2) - (b.getX() + b.getLength() / 2)) * 2 < (a.getLength() + b.getLength()) &&
         (abs((a.getY() + a.getHeight() / 2) - (b.getY() + b.getHeight() / 2)) * 2 < (a.getHeight() + b.getHeight()) &&
             abs((a.getZ() + a.getWidth() / 2) - (b.getZ() + b.getWidth() / 2)) * 2 < (a.getWidth() + b.getWidth())));*/
-
-
 }
 
 Rectangle Container::changeCoordsPlacingTop(Rectangle & rec, Rectangle & boxInContainer)
@@ -313,9 +311,8 @@ bool Container::collisionInsideContainer(Rectangle & rec, int pos)
    if (!containerCollision(rec))
         return true;
     int n = (int)loadingContainer.size() - 1;
-    int i = 0;
 
-    for (; i <= n; i++) {
+    for (int i = 0; i <= n; i++) {
         if(!noCollision(rec, loadingContainer[i]))
           return true;
     }
@@ -327,7 +324,7 @@ bool Container::collisionInsideContainer(Rectangle & rec, int pos)
 void Container::printCoords()
 {
     using std::cout;
-    /*for (int i = 0; i < (int)loadingContainer.size(); i++)
+    for (int i = 0; i < (int)loadingContainer.size(); i++)
     {
         cout << "Box number " << i+1 << '\n';
         cout << "TopLeftLHS(" << loadingContainer[i].topLeftLHS.getX() << "," << loadingContainer[i].topLeftLHS.getY() << "," << loadingContainer[i].topLeftLHS.getZ() << ")" << " "
@@ -342,14 +339,14 @@ void Container::printCoords()
         cout << "BottomRightLHS(" << loadingContainer[i].bottomRightLHS.getX() << "," << loadingContainer[i].bottomRightLHS.getY() << "," << loadingContainer[i].bottomRightLHS.getZ() << ")" << " "
             << "BotomRightRHS(" << loadingContainer[i].bottomRightRHS.getX() << "," << loadingContainer[i].bottomRightRHS.getY() << "," << loadingContainer[i].bottomRightRHS.getZ() << ")" << "\n";
         cout << "________________________________________________________________________\n";
-    }*/
-    double cube = 0;
+    }
+   /* double cube = 0;
     for (int i = 0; i < (int)loadingContainer.size(); i++) {
         Rectangle rec = loadingContainer[i];
         cube += ((double)rec.getHeight() / 100.0) * ((double)rec.getLength() / 100.0) * ((double)rec.getWidth() / 100.0);
     }
     cout << "Total amount of loaded cube is " << cube << '\n';
-    cout << loadingContainer.size() << " boxes were loaded!\n";
+    cout << loadingContainer.size() << " boxes were loaded!\n";*/
 }
 
 
@@ -689,6 +686,7 @@ void Container::loadBoxes(std::vector<Rectangle>& boxes) {
     std::mt19937 rng(dev());
     std::uniform_int_distribution<std::mt19937::result_type> dist6(0, 5);
 
+    std::random_shuffle(boxesForLoading.begin(), boxesForLoading.end());
     for (auto& cont : containers) {
        
         for (auto& box : boxesForLoading) {
@@ -705,8 +703,8 @@ void Container::loadBoxes(std::vector<Rectangle>& boxes) {
                     break;
                 }
             }
+            //std::random_shuffle(boxesForLoading.begin(), boxesForLoading.end());
         }
-        //std::random_shuffle(boxesForLoading.begin(), boxesForLoading.end());
         contIndex++;
     }
 
@@ -742,9 +740,9 @@ void Container::loadBoxes(std::vector<Rectangle>& boxes) {
         for (int k = 0; k < (int)containers[i].loadingContainer.size(); k++) {
             cubes += ((double)containers[i].loadingContainer[k].getCube() / 1000000.0);
         }
-
-        std::cout << '\n';
-        std::cout << containers[i].getLoadedQuan() << " cubes " << cubes << '\n';    
+        loadedVolume = cubes;
+        //std::cout << '\n';
+       // std::cout << containers[i].getLoadedQuan() << " cubes " << cubes << '\n';    
 }
 
 

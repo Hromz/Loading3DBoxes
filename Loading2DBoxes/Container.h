@@ -8,6 +8,7 @@
 #include <functional>
 #include "N-AryTree.h"
 #include <random>
+#include <cmath>
 
 class Container : Rectangle
 {
@@ -18,7 +19,7 @@ public:
     Rectangle container;
     std::vector<Rectangle> boxesToBeLoaded;
 
-    double loadedVolume;
+    double loadedVolume = 0;
 
     void setLoadedVolume(double vol) { loadedVolume = vol; }
     double getLoadedVolume() { return loadedVolume; }
