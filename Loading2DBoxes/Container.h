@@ -6,7 +6,6 @@
 #include <queue>
 #include <algorithm>
 #include <functional>
-#include "N-AryTree.h"
 #include <random>
 #include <cmath>
 
@@ -20,6 +19,7 @@ public:
     std::vector<Rectangle> boxesToBeLoaded;
 
     double loadedVolume = 0;
+    int boxes_left = 0;
 
     void setLoadedVolume(double vol) { loadedVolume = vol; }
     double getLoadedVolume() { return loadedVolume; }
@@ -36,7 +36,6 @@ public:
     checker check[6];
 
     void loadBoxes(std::vector<Rectangle> & boxes);
-    void generateBottomBox(std::vector<Rectangle>& temp);
     bool containerCollision(Rectangle& rec);
     bool collisionInsideContainer(Rectangle & rec, int pos);
     bool noCollision(Rectangle & rec, Rectangle & boxInContainer);
@@ -47,14 +46,12 @@ public:
 
     std::vector<std::pair<Rectangle, int>> merge_boxes(std::vector<std::pair<Rectangle, int>>& vec);
 
-
     Rectangle changeCoordsPlacingTop(Rectangle& rec, Rectangle & cont);
     Rectangle changeCoordsPlacingRHS(Rectangle& rec, Rectangle & cont);
     Rectangle changeCoordsPlacingFront(Rectangle& rec, Rectangle& cont);
 
     bool isLoadingCorrect();
 
-    void sortBoxes(std::vector<Rectangle> & boxes);
     int getQuanAlongSide(int side1, int side2);
     void setOptimalLoadingMap(int length, int width, int height);
     void printCoords();

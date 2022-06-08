@@ -153,8 +153,6 @@
   <ItemGroup>
     <ClInclude Include="Container.h" />
     <ClInclude Include="coords.h" />
-    <ClInclude Include="Header.h" />
-    <ClInclude Include="N-AryTree.h" />
     <ClInclude Include="rectangle.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

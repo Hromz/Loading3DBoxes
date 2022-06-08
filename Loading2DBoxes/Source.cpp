@@ -5,23 +5,34 @@
 #include <chrono>
 #include <algorithm>
 using namespace std::chrono;
+using std::cout;
+using std::cin;
 
 int main()
 {
-    int test = 15;
-    double temp = 2;
-    using std::cout;
-    using std::cin;
-    int length = 360, height = 170, width = 150;
+    int test = 20;
+    int length = 1360, height = 190, width = 240;
     double carCube = ((double)length / 100.0) * ((double)width / 100.0) * ((double)height / 100.0);
-
-    int wrong = 0, right = 0;
-
-    double total = 0;
+    Container cont;
     cout << "Car cube is " << carCube << "\n";
     while (test--) {
-        int check = 101;
+        int check = 201;
         std::vector<std::pair<double, int>> vec;
+        int totalQuan = 0;
+        double orderCube = 0;
+        int qBox = 8;
+        std::vector<Rectangle> boxes;
+       
+        while (qBox--) {
+            int quantity = rand() % 85 + 60, boxLength = rand() % 60 + 20, boxHeight = rand() % 60 + 20, boxWidth = rand() % 60 + 20;
+
+            for (int i = 0; i < quantity; i++) {
+                boxes.push_back(Rectangle(boxLength, boxHeight, boxWidth));
+            }
+            totalQuan += quantity;
+            orderCube += (((double)boxLength * (double)boxWidth * (double)boxHeight) / 1000000.0) * quantity;
+        }
+
         while (check--) {
 
             std::vector<Container> subContainers;
@@ -30,20 +41,6 @@ int main()
                 subContainers.push_back(cont);
             }
 
-            int totalQuan = 0;
-            double orderCube = 0;
-            int qBox = 6;
-            std::vector<Rectangle> boxes;
-            while (qBox--) {
-                int quantity = rand() % 45 + 20, boxLength = rand() % 40 + 15, boxHeight = rand() % 40 + 15, boxWidth = rand() % 40 + 15;
-
-                for (int i = 0; i < quantity; i++) {
-                    boxes.push_back(Rectangle(boxLength, boxHeight, boxWidth));
-                }
-                totalQuan += quantity;
-                orderCube += ((((double)boxLength / 100.0) * ((double)boxWidth / 100.0) * ((double)boxHeight / 100.0)) * quantity);
-                // cout << "\n Quantity " << quantity << " length " << boxLength << " width " << boxWidth << " height " << boxHeight << '\n';
-            }
             long double totalVolume = 0;
             auto start = high_resolution_clock::now();
             for (int i = 0; i < 1; i++) {
@@ -53,26 +50,25 @@ int main()
             auto stop = high_resolution_clock::now();
             auto duration = duration_cast<microseconds>(stop - start);
 
-            /*cout << "Loaded volume is " << totalVolume << '\n';
-            cout << "Initially were " << totalQuan << '\n';
-            cout << "Car cube is " << carCube << " " << "initial order cube " << orderCube << '\n';
-            cout << "Runtime is " << (double)duration.count() / 1e6 << "sec\n";
-            */
-
             if (carCube >= totalVolume) {
                 if (vec.size() > 0 && vec[0].first < totalVolume) {
                     vec.pop_back();
                     totalVolume += 0.005;
                     vec.push_back({ totalVolume, totalQuan });
+                    cont = subContainers[0];
                 }
                 if(vec.size() == 0) vec.push_back({ totalVolume, totalQuan });
 
             }
         }
+        cout << cont.isLoadingCorrect() << "\n";
         cout.precision(3);
-            cout << "Total loaded cubes are " << vec[0].first << " " << "quantity of boxes are " << vec[0].second << "\n";
+        cout << "Order cube is " << orderCube << "\n";
+            cout << "Total loaded cubes are " << vec[0].first << " " << "quantity of boxes are " << cont.loadingContainer.size() * 2 << "\n";
+            cout << "Boxes left are " << cont.boxes_left << " resiudal space is " << carCube - vec[0].first << "\n";
        
         cout << "------------------------------------------------\n";
+       //cont.printCoords();
     }
 
 

@@ -1,8 +1,7 @@
 #include "Container.h"
 #include <algorithm>
 
-Container::Container(int length, int height, int width)
-{
+Container::Container(int length, int height, int width) {
     container.setRectangle(length, height, width);
     place[0] = &Container::bs_FR;
     place[1] = &Container::bs_RF;
@@ -19,31 +18,28 @@ Container::Container(int length, int height, int width)
     check[5] = &Container::isFull_UR;
 }
 
-bool Container::containerCollision(Rectangle & rec)
-{
+bool Container::containerCollision(Rectangle & rec) {
     return (container.getX() >= rec.getX() && container.getY() >= rec.getY() && container.getZ() >= rec.getZ());
 }
 
-bool Container::noCollision(Rectangle& a, Rectangle& b)
-{
-    if (a.getMinX() >= b.getMaxX()) return true;
+bool Container::noCollision(Rectangle& a, Rectangle& b) {
+    /*if (a.getMinX() >= b.getMaxX()) return true;
     if(b.getMinX() >= a.getMaxX()) return true;
     if (a.getMinY() >= b.getMaxY()) return true;
     if (b.getMinY() >= a.getMaxY()) return true;
     if (a.getMinZ() >= b.getMaxZ()) return true;
     if (b.getMinZ() >= a.getMaxZ()) return true;
-
-    return false;
+    
+    return false;*/
 /* return (a.getMinX() >= b.getMaxX() || b.getMinX() >= a.getMaxX() ||
             a.getMinY() >= b.getMaxY() || b.getMinY() >= a.getMaxY() ||
             a.getMinZ() >= b.getMaxZ() || b.getMinZ() >= a.getMaxZ());*/
-   /*return !(abs((a.getX() + a.getLength() / 2) - (b.getX() + b.getLength() / 2)) * 2 < (a.getLength() + b.getLength()) &&
+   return !(abs((a.getX() + a.getLength() / 2) - (b.getX() + b.getLength() / 2)) * 2 < (a.getLength() + b.getLength()) &&
         (abs((a.getY() + a.getHeight() / 2) - (b.getY() + b.getHeight() / 2)) * 2 < (a.getHeight() + b.getHeight()) &&
-            abs((a.getZ() + a.getWidth() / 2) - (b.getZ() + b.getWidth() / 2)) * 2 < (a.getWidth() + b.getWidth())));*/
+            abs((a.getZ() + a.getWidth() / 2) - (b.getZ() + b.getWidth() / 2)) * 2 < (a.getWidth() + b.getWidth())));
 }
 
-Rectangle Container::changeCoordsPlacingTop(Rectangle & rec, Rectangle & boxInContainer)
-{
+Rectangle Container::changeCoordsPlacingTop(Rectangle & rec, Rectangle & boxInContainer) {
     Rectangle* temp = new Rectangle;
 
     //Set LHS coordinates
@@ -70,8 +66,7 @@ Rectangle Container::changeCoordsPlacingTop(Rectangle & rec, Rectangle & boxInCo
     return *temp;
 }
 
-Rectangle Container::changeCoordsPlacingRHS(Rectangle& rec, Rectangle& boxInContainer)
-{
+Rectangle Container::changeCoordsPlacingRHS(Rectangle& rec, Rectangle& boxInContainer) {
     Rectangle* temp = new Rectangle;
     
     //Set LHS coordinates
@@ -98,8 +93,7 @@ Rectangle Container::changeCoordsPlacingRHS(Rectangle& rec, Rectangle& boxInCont
     return *temp;
 }
 
-Rectangle Container::changeCoordsPlacingFront(Rectangle& rec, Rectangle& boxInContainer)
-{
+Rectangle Container::changeCoordsPlacingFront(Rectangle& rec, Rectangle& boxInContainer) {
     Rectangle* temp = new Rectangle;
 
     //Set LHS coordinates
@@ -153,21 +147,19 @@ Rectangle Container::binarySearchRHS(Rectangle& rec, bool & flag) {
         else {
             left = middle;
             break;
-        }
-          
+        }        
     }
 
     temp = changeCoordsPlacingRHS(rec, loadingContainer[left]);
     if (!collisionInsideContainer(temp, left)) {
         for (int i = prev; i <= left; i++) {
             temp = changeCoordsPlacingRHS(rec, loadingContainer[i]);
-            if (!collisionInsideContainer(temp, i) && containerCollision(temp)) {
+            if (!collisionInsideContainer(temp, prev) && containerCollision(temp)) {
                 flag = true;
                 return temp;
             }
         }
     }
-
     return rec;
 }
 
@@ -204,7 +196,7 @@ Rectangle Container::binarySearchTop(Rectangle& rec, bool & flag) {
     if(!collisionInsideContainer(temp, left)) {
         for (int i = prev; i <= left; i++) {
             temp = changeCoordsPlacingTop(rec, loadingContainer[i]);
-            if (!collisionInsideContainer(temp, i) && containerCollision(temp)) {
+            if (!collisionInsideContainer(temp, prev) && containerCollision(temp)) {
                 flag = true;
                 return temp;
             }
@@ -247,7 +239,7 @@ Rectangle Container::binarySearchFront(Rectangle& rec, bool & flag) {
     if(!collisionInsideContainer(temp, left)) {
         for (int i = prev; i <= left; i++) {
             temp = changeCoordsPlacingFront(rec, loadingContainer[i]);
-            if (!collisionInsideContainer(temp, i) && containerCollision(temp)) {
+            if (!collisionInsideContainer(temp, prev) && containerCollision(temp)) {
                 flag = true;
                 return temp;
             }
@@ -257,9 +249,7 @@ Rectangle Container::binarySearchFront(Rectangle& rec, bool & flag) {
    return rec;
 }
 
-
-void Container::placeInside(std::vector<Rectangle>& boxes)
-{
+void Container::placeInside(std::vector<Rectangle>& boxes) {
     if (loadingContainer.size() == 0 && boxes.size() > 0){
         loadingContainer.push_back(boxes[0]);
         boxes.erase(boxes.begin());
@@ -292,7 +282,6 @@ void Container::placeInside(std::vector<Rectangle>& boxes)
                 }
             }
 
-
             if (!placeFront) {
                 Rectangle temp = binarySearchFront(boxes[i], canBeLoaded);
                 if (canBeLoaded) {
@@ -302,12 +291,10 @@ void Container::placeInside(std::vector<Rectangle>& boxes)
                     flag = true;
                 }
             }
-
         }
 }
 
-bool Container::collisionInsideContainer(Rectangle & rec, int pos)
-{
+bool Container::collisionInsideContainer(Rectangle & rec, int pos) {
    if (!containerCollision(rec))
         return true;
     int n = (int)loadingContainer.size() - 1;
@@ -316,13 +303,10 @@ bool Container::collisionInsideContainer(Rectangle & rec, int pos)
         if(!noCollision(rec, loadingContainer[i]))
           return true;
     }
-
     return false;
 }
 
-
-void Container::printCoords()
-{
+void Container::printCoords() {
     using std::cout;
     for (int i = 0; i < (int)loadingContainer.size(); i++)
     {
@@ -340,18 +324,10 @@ void Container::printCoords()
             << "BotomRightRHS(" << loadingContainer[i].bottomRightRHS.getX() << "," << loadingContainer[i].bottomRightRHS.getY() << "," << loadingContainer[i].bottomRightRHS.getZ() << ")" << "\n";
         cout << "________________________________________________________________________\n";
     }
-   /* double cube = 0;
-    for (int i = 0; i < (int)loadingContainer.size(); i++) {
-        Rectangle rec = loadingContainer[i];
-        cube += ((double)rec.getHeight() / 100.0) * ((double)rec.getLength() / 100.0) * ((double)rec.getWidth() / 100.0);
-    }
-    cout << "Total amount of loaded cube is " << cube << '\n';
-    cout << loadingContainer.size() << " boxes were loaded!\n";*/
 }
 
 
 int Container::getQuanAlongSide(int side1, int side2){
-
     return (container.getLength() / side1) * (container.getWidth() / side2);
 }
 
@@ -397,10 +373,9 @@ void Container::setOptimalLoadingMap(int length, int width, int height) {
     std::cout << totalQuantity << " boxes were loaded!\n";
 }
 
-bool Container::isLoadingCorrect()
-{
+bool Container::isLoadingCorrect() {
     for (int i = 0; i < (int)loadingContainer.size(); i++) {
-        for (int j = 0; j < (int)loadingContainer.size(); j++) {
+        for (int j = i+1; j < (int)loadingContainer.size(); j++) {
            if (i == j)
                 continue;
             if (!noCollision(loadingContainer[i], loadingContainer[j])) {
@@ -416,22 +391,15 @@ bool Container::isLoadingCorrect()
 void Container::Insert(Rectangle & rec) {
     if (loadingContainer.size() == 0) {
         loadingContainer.push_back(rec);
+        return;
     }
 
         bool canBeLoaded = false;
-        Rectangle temp = binarySearchRHS(rec, canBeLoaded);
-        if (canBeLoaded) {
-            loadingContainer.push_back(temp);
-            return;
-        }
-
-        if (!canBeLoaded)
+        Rectangle temp = binarySearchTop(rec, canBeLoaded);
+        if (canBeLoaded)
         {
-            Rectangle temp = binarySearchTop(rec, canBeLoaded);
-            if (canBeLoaded) {
                 loadingContainer.push_back(temp);
                 return;
-            }
         }
 
         if (!canBeLoaded) {
@@ -440,16 +408,19 @@ void Container::Insert(Rectangle & rec) {
                 loadingContainer.push_back(temp); 
             }
         }
+      
+        if (!canBeLoaded) {
+            Rectangle temp = binarySearchRHS(rec, canBeLoaded);
+            if(canBeLoaded)
+            loadingContainer.push_back(temp);
+        }
 }
 
-
-
 bool Container::isFull(Rectangle & rec) {
-    
-    
+       
  if (loadingContainer.size() == 0) {
         return false;
-    }
+ }
 
     bool canBeLoaded = false;
     Rectangle temp = binarySearchRHS(rec, canBeLoaded);
@@ -472,121 +443,6 @@ bool Container::isFull(Rectangle & rec) {
     return true;
 }
 
-
-void Container::sortBoxes(std::vector<Rectangle>& boxes) {
-    struct CMP_SORT {
-        bool operator() (const std::tuple<int, int, int> t1, const std::tuple<int, int, int> t2) const {
-            return t1 > t2;
-        }
-    };
-    std::map<std::tuple<int, int, int>, int, CMP_SORT> load;
-
-    for (auto& b : boxes) {
-        load[std::make_tuple(b.getLength(), b.getHeight(), b.getWidth())]++;
-    }
-
-    int contArea = container.getArea();
-
-    std::vector<std::vector<Rectangle>> lairs;
-
-    while (load.size() > 0) {
-        std::vector<std::pair<int, Rectangle>> dp(contArea + 1);
-        std::vector<Rectangle> vec;
-        dp[0].first = 1;
-
-        for (int i = 1; i <= contArea; i++) {
-            for (auto& b : load) {
-                std::tuple<int, int, int> temp = b.first;
-                int l = std::get<0>(temp), h = std::get<1>(temp), w = std::get<2>(temp);
-                int area = l * w;
-                if (i - area >= 0 && b.second > 0 && dp[i - area].first > 0) {
-                    Rectangle rec(l, h, w);
-                    dp[i].first = dp[i - area].first;
-                    dp[i].second = rec;
-                }
-            }
-        }
-
-        int n = contArea;
-        while (dp[n].first != 1) {
-            n--;
-        }
-
-        for (int i = n; i >= 0; ) {
-            std::tuple<int, int, int> temp = std::make_tuple(dp[i].second.getLength(), dp[i].second.getHeight(), dp[i].second.getWidth());
-            if (load[temp] > 0) {
-                vec.push_back(dp[i].second);
-                i -= dp[i].second.getArea();
-                load[temp]--;
-            }
-            else {
-                break;
-            }
-        }
-
-        for (auto it = load.begin(); it != load.end();) {
-            if (it->second <= 0) {
-                auto temp = it->first;
-                load.erase(temp);
-                it = load.begin();
-            }
-            if (it != load.end())
-                it++;
-        }
-        lairs.push_back(vec);
-    }
-
-    std::vector<Rectangle> vec;
-    std::vector<std::pair<double, int>> index;
-    for (int i = 0; i < (int)lairs.size(); i++) {
-        double cube = 0;
-        for (int j = 0; j < (int)lairs[i].size(); j++) {
-            cube += ((double)lairs[i][j].getCube() / 1000000.0);
-        }
-        index.push_back(std::make_pair(cube, i));
-    }
-
-    sort(index.rbegin(), index.rend());
-    for (int i = 0; i < (int)index.size(); i++) {
-        for (int j = 0; j < (int)lairs[index[i].second].size(); j++) {
-            vec.push_back(lairs[index[i].second][j]);
-        }
-    }
-
-    boxes = vec;
-}
-
-
-void Container::generateBottomBox(std::vector<Rectangle>& temp) {
-
-    std::map<std::tuple<int, int, int>, int> load;
-
-    for(auto & b : temp) {
-        load[std::make_tuple(b.getLength(), b.getHeight(), b.getWidth())]++;
-    }
-
-    //Generate simple box bottom
-    std::vector<Rectangle> simpleBoxes;
-    for (auto& t : load) {
-        if (t.second % 4 == 0) {
-            std::tuple<int, int, int> temp = t.first;
-            int l = std::get<0>(temp), w = std::get<2>(temp), h = std::get<1>(temp);
-            Rectangle rec(l,h*2,w*2);
-            for (int i = 0; i < t.second / 4; i++) {
-                simpleBoxes.push_back(rec);
-            }
-        }
-        else if (t.second % 2 == 0) {
-            std::tuple<int, int, int> temp = t.first;
-            int l = std::get<0>(temp), w = std::get<2>(temp), h = std::get<1>(temp);
-            Rectangle rec(l, h, w*2);
-            for (int i = 0; i < t.second / 2; i++) {
-                simpleBoxes.push_back(rec);
-            }
-        }
-    }
-    temp = simpleBoxes;
-}
 
 void Container::bruteForce_Loading(Rectangle& rec, bool & flag) {
 
@@ -629,12 +485,12 @@ std::vector<std::pair<Rectangle, int>> Container::merge_boxes(std::vector<std::p
     std::vector<std::pair<Rectangle, int>> ans;
 
     for (auto r : boxes) {
-        Rectangle temp(r.first.getLength(), r.first.getHeight(), r.first.getWidth() * 2);
+        Rectangle temp(r.first.getLength()*4, r.first.getHeight(), r.first.getWidth()*2);
         
-        int qty = r.second / 2;
-        int left_qty = r.second % 2;
+        int qty = r.second / 8;
+        int left_qty = r.second % 8;
 
-        if (qty > 0) ans.push_back({ temp, qty });
+        if (qty > 0 )ans.push_back({ temp, qty });
         if (left_qty > 0) ans.push_back({ r.first, left_qty });
     }
     return ans;
@@ -672,13 +528,13 @@ void Container::loadBoxes(std::vector<Rectangle>& boxes) {
         }
   
 
-     boxesForLoading = merge_boxes(boxesForLoading);
+    boxesForLoading = merge_boxes(boxesForLoading);
     std::vector<std::vector<Rectangle>> unusedBoxes(1);
+    double cubes = 0;
 
-
-    sort(boxesForLoading.begin(), boxesForLoading.end(), [](std::pair<Rectangle, int>& rec1, std::pair<Rectangle, int>& rec2) {
+    /*sort(boxesForLoading.begin(), boxesForLoading.end(), [](std::pair<Rectangle, int>& rec1, std::pair<Rectangle, int>& rec2) {
         return rec1.second > rec2.second;
-     });
+     });*/
 
     int contIndex = 0;
 
@@ -696,34 +552,24 @@ void Container::loadBoxes(std::vector<Rectangle>& boxes) {
             while (q--) {
                 if (!(cont.*check[place_style])(box.first)) {
                     (cont.*place[place_style])(box.first);
+                    //cubes += ((double)containers[0].loadingContainer.back().getCube() / 1000000.0);
                 }
+                /*if (cont.isFull(box.first)) {
+                    cont.Insert(box.first);
+                    cubes += ((double)containers[0].loadingContainer.back().getCube() / 1000000.0);
+                }*/
                 else {
                     for(int i = 0; i < q; i++)
                       unusedBoxes[contIndex].push_back(box.first);
                     break;
                 }
             }
-            //std::random_shuffle(boxesForLoading.begin(), boxesForLoading.end());
         }
         contIndex++;
     }
 
 
-    int i = 0; int j = 0; double cubes = 0, ans = 0; int row = 0;
-
-        /*for (auto& cont : containers) {
-            //cubes = 0;
-            for (int k = 0; k < (int)cont.loadingContainer.size(); k++) {
-                cubes += ((double)cont.loadingContainer[k].getCube() / 1000000.0);
-            }
-            if (ans < cubes) {
-                ans = cubes;
-                maxBoxes = cont.getLoadedQuan();
-                i = j;
-            }
-            j++;
-        }*/
-        //cubes = 0;
+    int i = 0;
 
         if(unusedBoxes[i].size() > 0)
         sort(unusedBoxes[i].begin(), unusedBoxes[i].end(), [](Rectangle& rec1, Rectangle& rec2) {
@@ -732,17 +578,21 @@ void Container::loadBoxes(std::vector<Rectangle>& boxes) {
 
         for (int z = 0; z < unusedBoxes[i].size(); z++) {
             
-            bool flag = false;
+           bool flag = false;
            containers[i].bruteForce_Loading(unusedBoxes[i][z], flag);
-           if (flag) { cubes += unusedBoxes[i][z].getCube() / 1000000.0; }
+           if (flag) {
+              // cubes += (double)unusedBoxes[i][z].getCube() / 1000000.0; 
+           }
+           else {
+               boxes_left++;
+           }
         }
 
+        loadingContainer = containers[0].loadingContainer;
         for (int k = 0; k < (int)containers[i].loadingContainer.size(); k++) {
             cubes += ((double)containers[i].loadingContainer[k].getCube() / 1000000.0);
         }
-        loadedVolume = cubes;
-        //std::cout << '\n';
-       // std::cout << containers[i].getLoadedQuan() << " cubes " << cubes << '\n';    
+        loadedVolume = cubes;    
 }
 
 
@@ -761,14 +611,6 @@ bool Container::isFull_RF(Rectangle& rec) {
         if (canBeLoaded) {
             return false;
         }
-  
-
-  /*temp = binarySearchTop(rec, canBeLoaded);
-        if (canBeLoaded) {
-            return false;
-        }*/
- 
-
     return true;
 }
 
@@ -782,18 +624,12 @@ bool Container::isFull_RU(Rectangle& rec) {
     if (canBeLoaded) {
         return false;
     }
-
-   
-        temp = binarySearchTop(rec, canBeLoaded);
-        if (canBeLoaded) {
-            return false;
-        }
-   
-        /* temp = binarySearchFront(rec, canBeLoaded);
-        if (canBeLoaded) {
-            return false;
-        }*/
-
+  
+    temp = binarySearchTop(rec, canBeLoaded);
+     if (canBeLoaded) {
+         return false;
+     }
+  
     return true;
 }
 
@@ -814,10 +650,6 @@ bool Container::isFull_UF(Rectangle& rec) {
             return false;
         }
 
-        /* temp = binarySearchRHS(rec, canBeLoaded);
-        if (canBeLoaded) {
-           return false;
-        }*/
     return true;
 }
 
@@ -827,23 +659,14 @@ bool Container::isFull_UR(Rectangle& rec) {
     }
 
     bool canBeLoaded = false;
-
     Rectangle temp = binarySearchTop(rec, canBeLoaded);
     if (canBeLoaded) {
         return false;
     }
-
-
          temp = binarySearchRHS(rec, canBeLoaded);
         if (canBeLoaded) {
             return false;
         }
-  
-    
-        /* temp = binarySearchFront(rec, canBeLoaded);
-        if (canBeLoaded) {
-            return false;
-        }*/
 
     return true;
 }
@@ -861,17 +684,10 @@ bool Container::isFull_FR(Rectangle& rec) {
         return false;
     }
 
-
          temp = binarySearchRHS(rec, canBeLoaded);
         if (canBeLoaded) {
             return false;
         }
-
-
-        /* temp = binarySearchTop(rec, canBeLoaded);
-        if (canBeLoaded) {
-            return false;
-        }*/
  
     return true;
 }
@@ -882,27 +698,15 @@ bool Container::isFull_FU(Rectangle& rec) {
     }
 
     bool canBeLoaded = false;
-
-
     Rectangle temp = binarySearchFront(rec, canBeLoaded);
     if (canBeLoaded) {
         return false;
     }
-
-  
         temp = binarySearchTop(rec, canBeLoaded);
         if (canBeLoaded) {
             return false;
         }
-   
-
-   
-        /*temp = binarySearchRHS(rec, canBeLoaded);
-        if (canBeLoaded) {
-            return false;
-        }*/
-   
-
+  
     return true;
 }
 
@@ -926,15 +730,6 @@ void Container::bs_RF(Rectangle& rec) {
             return;
         }
     }
-
-    /* if (!canBeLoaded)
-    {
-        Rectangle temp = binarySearchTop(rec, canBeLoaded);
-        if (canBeLoaded) {
-            loadingContainer.push_back(temp);
-            return;
-        }
-    }*/
 }
 
 void Container::bs_RU(Rectangle& rec) {
@@ -958,14 +753,6 @@ void Container::bs_RU(Rectangle& rec) {
             return;
         }
     }
-
-    /*if (!canBeLoaded) {
-        Rectangle temp = binarySearchFront(rec, canBeLoaded);
-        if (canBeLoaded) {
-            loadingContainer.push_back(temp);
-            return;
-        }
-    }*/
 }
 
 void Container::bs_UF(Rectangle& rec) {
@@ -989,15 +776,6 @@ void Container::bs_UF(Rectangle& rec) {
                 return;
             }
         }
-
-        /*if (!canBeLoaded)
-        {
-            Rectangle temp = binarySearchRHS(rec, canBeLoaded);
-            if (canBeLoaded) {
-                loadingContainer.push_back(temp);
-                return;
-            }
-        }*/
 }
 
 void Container::bs_UR(Rectangle& rec) {
@@ -1022,13 +800,6 @@ void Container::bs_UR(Rectangle& rec) {
             return;
         }
     }
-    /*if (!canBeLoaded) {
-        Rectangle temp = binarySearchFront(rec, canBeLoaded);
-        if (canBeLoaded) {
-            loadingContainer.push_back(temp);
-            return;
-        }
-    }*/
 }
 
 void Container::bs_FR(Rectangle& rec) {
@@ -1038,8 +809,6 @@ void Container::bs_FR(Rectangle& rec) {
     }
 
     bool canBeLoaded = false;
-
-
         Rectangle temp = binarySearchFront(rec, canBeLoaded);
         if (canBeLoaded) {
             loadingContainer.push_back(temp);
@@ -1054,15 +823,6 @@ void Container::bs_FR(Rectangle& rec) {
                 return;
             }
         }
-
-        /*if (!canBeLoaded) {
-            Rectangle temp = binarySearchTop(rec, canBeLoaded);
-            if (canBeLoaded) {
-                loadingContainer.push_back(temp);
-                return;
-            }
-        }*/
-
 }
 
 void Container::bs_FU(Rectangle& rec) {
@@ -1085,499 +845,4 @@ void Container::bs_FU(Rectangle& rec) {
             return;
         }
     }
-
-    /*if (!canBeLoaded)
-    {
-        Rectangle temp = binarySearchRHS(rec, canBeLoaded);
-        if (canBeLoaded) {
-            loadingContainer.push_back(temp);
-            return;
-        }
-    }*/
 }
-
-
-   // sortBoxes(boxes);
-    //generateBottomBox(boxes);
-
-    //Container root(container.getLength(), container.getHeight(), container.getWidth());
-    /*Node<Container> treeXYZ(root);  treeXYZ.insertNode(root);
-    Node<Container> treeXZY(root);  treeXZY.insertNode(root);
-    Node<Container> treeYXZ(root);  treeYXZ.insertNode(root);
-    Node<Container> treeYZX(root);  treeYZX.insertNode(root);
-    Node<Container> treeZYX(root);  treeZYX.insertNode(root);
-    Node<Container> treeZXY(root);  treeZXY.insertNode(root);*/
-    //std::vector<std::vector<Node<Container>>> nodesXYZ;
-   /* std::vector<Node<Container>> roots;
-
-    for (int i = 0; i < 6; i++) {
-       Container root(container.getLength(), container.getHeight(), container.getWidth());
-       Node<Container> tree(root);  tree.insertNode(root);
-       roots.push_back(tree);
-    }
-
-    int maxLoad = 0;
-
-    for (int i = 0; i < (int)boxes.size(); i++) {
-        int l = boxes[i].getLength(), w = boxes[i].getWidth(), h = boxes[i].getHeight();
-        Rectangle rec = boxes[i];
-        
-        if (!roots[0].val.isFull(rec)) {
-            Container temp = roots[0].val;
-            temp.Insert(rec);
-            maxLoad = (maxLoad, temp.getLoadedQuan());
-            roots[0].insertNode(temp);
-            roots[0] = roots[0].children[0]->val;
-        }
-        rec = boxes[i].turnBottomFront(l, h, w);
-        if (!roots[1].val.isFull(rec)) {
-            Container temp = roots[1].val;
-            temp.Insert(rec);
-            maxLoad = (maxLoad, temp.getLoadedQuan());
-            roots[1].insertNode(temp);
-            roots[1] = roots[1].children[0]->val;
-        }
-        rec = boxes[i].turnBottomUpFront(l, h, w);
-        if (!roots[2].val.isFull(rec)) {
-            Container temp = roots[2].val;
-            temp.Insert(rec);
-            maxLoad = (maxLoad, temp.getLoadedQuan());
-            roots[2].insertNode(temp);
-            roots[2] = roots[2].children[0]->val;
-        }
-        rec = boxes[i].turnSideDown(l, h, w);
-        if (!roots[3].val.isFull(rec)) {
-            Container temp = roots[3].val;
-            temp.Insert(rec);
-            maxLoad = (maxLoad, temp.getLoadedQuan());
-            roots[3].insertNode(temp);
-            roots[3] = roots[3].children[0]->val;
-        }
-        rec = boxes[i].turnSideFront(l, h, w);
-        if (!roots[4].val.isFull(rec)) {
-            Container temp = roots[4].val;
-            temp.Insert(rec);
-            maxLoad = (maxLoad, temp.getLoadedQuan());
-            roots[4].insertNode(temp);
-            roots[4] = roots[4].children[0]->val;
-        }
-        rec = boxes[i].turnSideUpFront(l, h, w);
-        if (!roots[5].val.isFull(rec)) {
-            Container temp = roots[5].val;
-            temp.Insert(rec);
-            maxLoad = (maxLoad, temp.getLoadedQuan());
-            roots[5].insertNode(temp);
-            roots[5] = roots[5].children[0]->val;
-        }
-      
-    }
-    std::cout << "Max load is " << maxLoad << '\n';*/
-
-   /* tree.insertNode(root);
-    std::queue<Node<Container>> q1, q2;
-    q1.push(root);
-
-    for (auto & b : boxes) {              
-
-        while (!q1.empty()) {
-            auto cur = q1.front();
-            q1.pop();
-            std::vector<Rectangle> rotations;
-            rotations.push_back(b);
-            rotations.push_back(b.turnBottomFront(b.getLength(), b.getHeight(), b.getWidth()));
-            rotations.push_back(b.turnBottomUpFront(b.getLength(), b.getHeight(), b.getWidth()));
-            rotations.push_back(b.turnSideDown(b.getLength(), b.getHeight(), b.getWidth()));
-            rotations.push_back(b.turnSideFront(b.getLength(), b.getHeight(), b.getWidth()));
-            rotations.push_back(b.turnSideUpFront(b.getLength(), b.getHeight(), b.getWidth()));
-
-            for (int i = 0; i < (int)rotations.size(); i++) {
-                if (!cur.val.isFull(rotations[i])) {
-                    cur.insertNode(cur.val);
-                    cur.children.back()->val.Insert(rotations[i]);
-                    q2.push(*cur.children.back());
-                }
-            }
-            
-        }
-        q1 = std::move(q2);
-        q2 = std::queue<Node<Container>>();
-    }
-
-    std::vector<Rectangle> ans;
-    while (!q1.empty()) {
-        if ((int)ans.size() < q1.front().val.getLoadedQuan()) {
-            ans = q1.front().val.getConainer();
-        }
-        q1.pop();
-    }*/
-
-/* for (auto& b : boxes) {
-     b.rotateBox(b, container.getLength());
- }
-
- sort(boxes.begin(), boxes.end(), [](Rectangle& rec1, Rectangle& rec2) {
-     return rec1.getLength() > rec2.getLength();
-     });*/
-
-/*void Container::generateLoadingMap(std::vector<Rectangle>& boxes) {
-    struct RectCMP_SORT {
-        bool operator() (const Rectangle& rec1, const Rectangle& rec2) const {
-            return (rec1.topLeftLHS > rec2.topLeftLHS && rec1.topLeftRHS > rec2.topLeftRHS && rec1.topRightLHS > rec2.topRightLHS && rec1.topRightRHS > rec2.topRightRHS &&
-                rec1.bottomLeftLHS > rec2.bottomLeftLHS && rec1.bottomLeftRHS > rec2.bottomLeftRHS && rec1.bottomRightLHS > rec2.bottomRightLHS && rec1.bottomRightRHS > rec2.bottomRightRHS);
-        }
-    };
-
-    std::vector<Rectangle> ans;
-    std::map<Rectangle, int, RectCMP_SORT> boxMap;
-    for (int i = 0; i < (int)boxes.size(); i++) {
-        boxMap[boxes[i]]++;
-    }
-
-    struct lbx {
-        Rectangle box;
-        int quantity;
-    };
-    std::vector<lbx> temp;
-
-    for (auto& b : boxMap) {
-        temp.push_back({ b.first, b.second });
-    }
-
-    int n = container.getLength();
-    int m = container.getWidth();
-    const int contHeight = container.getHeight();
-    loadingMap.resize(n + 1, std::vector<std::pair<int, int>>(m + 1));
-    
-    loadingMap[0][0].first = 1;
-
-    int totalBoxes = 0;
-    int I, J;
-  
-
-        for (int j = 0; j <= m; j++) {
-            for (int i = 0; i <= n; i++) {
-            for (auto& b : temp) {
-                int boxLen = b.box.getLength(), boxWidth = b.box.getWidth(), boxHeight = b.box.getHeight();
-                if (b.quantity > 0) {
-                    if (i - boxLen >= 0 && j - boxWidth >= 0 && loadingMap[i][j].second + boxHeight <= contHeight) {
-                        loadingMap[i][j].first = loadingMap[i - boxLen][j - boxWidth].first + 1;
-                        loadingMap[i][j].second += boxHeight;
-                        loadingMap[j][i].second += boxHeight;
-                    }
-                    if (i - boxLen >= 0 && j - boxHeight >= 0 && loadingMap[i][j].second + boxWidth <= contHeight) {
-                        loadingMap[i][j].first = loadingMap[i - boxLen][j - boxHeight].first + 1;
-                        loadingMap[i][j].second += boxWidth;
-                        loadingMap[j][i].second += boxWidth;
-                    }
-                    if (i - boxWidth >= 0 && j - boxLen >= 0 && loadingMap[i][j].second + boxHeight <= contHeight) {
-                        loadingMap[i][j].first = loadingMap[i - boxWidth][j - boxLen].first + 1;
-                        loadingMap[i][j].second += boxHeight;
-                        loadingMap[j][i].second += boxHeight;
-                    }
-                    if (i - boxWidth >= 0 && j - boxHeight >= 0 && loadingMap[i][j].second + boxLen <= contHeight) {
-                        loadingMap[i][j].first = loadingMap[i - boxWidth][j - boxHeight].first + 1;
-                        loadingMap[i][j].second += boxLen;
-                        loadingMap[j][i].second += boxLen;
-                    }
-                    if (i - boxHeight >= 0 && j - boxWidth >= 0 && loadingMap[i][j].second + boxLen <= contHeight) {
-                        loadingMap[i][j].first = loadingMap[i - boxHeight][j - boxWidth].first + 1;
-                        loadingMap[i][j].second += boxLen;
-                        loadingMap[j][i].second += boxLen;
-                    }
-                    if (i - boxHeight >= 0 && j - boxLen >= 0 && loadingMap[i][j].second + boxWidth <= contHeight) {
-                        loadingMap[i][j].first = loadingMap[i - boxHeight][j - boxLen].first + 1;
-                        loadingMap[i][j].second += boxWidth;
-                        loadingMap[j][i].second += boxWidth;
-                    }
-                    if (totalBoxes < loadingMap[i][j].first) {
-                        I = i; J = j;
-                        totalBoxes = loadingMap[i][j].first;
-                    }
-                }
-            }
-        }
-    }
-
-        std::cout << totalBoxes << '\n';
-}*/
-
-
-/*
-*
-* if (rec == b) {
-        bxRt = 0, ldgApp = 0;
-    }
-    else {
-        i++;
-        bxRt = 4, ldgApp = 5;
-    }
-* if ((i & 1)) {
-            if (ldgApp == 6) {
-                if (bxRt == 4) {
-                    bxRt = -1;
-                }
-                ldgApp = 0;
-                bxRt++;
-            }//(b.*rotate[j])();
-
-            (b.*rotate[bxRt])();
-            (cont.*place[ldgApp])(b);
-            ldgApp++;
-        }
-        else {
-            if (ldgApp == 0) {
-                if (bxRt == 0) {
-                    bxRt = 4;
-                }
-                ldgApp = 5;
-                bxRt--;
-            }//(b.*rotate[j])();
-
-            (b.*rotate[bxRt])();
-            (cont.*place[ldgApp])(b);
-            ldgApp--;
-        }
-    }
-*
-*/
-
-/*
-            *       for (int i = 0; i < 6; i++) {
-            if (!(containers[i].*check[i])(b)) {
-                (containers[i].*place[i])(b);
-            }
-            else {
-                bool flag = false;
-                for (int j = 0; j < 5; j++) {
-                    (b.*rotate[j])();
-                    if (!(containers[i].*check[i])(b)) {
-                        (containers[i].*place[i])(b);
-                        flag = true;
-                        break;
-                    }
-                }
-            }
-            }*/
-
-            //std::vector<std::pair<double,int>> index;
-
-
-          /* for (int i = 0; i < (int)lairs.size(); i++) {
-                double cube = 0;
-                for (int j = 0; j < (int)lairs[i].size(); j++) {
-                    cube += ((double)lairs[i][j].getCube() / 1000000.0);
-                }
-                index.push_back(std::make_pair(cube, i));
-            }*/
-
-            //std::reverse(vec.begin(), vec.end());
-
-            //std::vector<Rectangle> vec;
-
-
-            /*bxTps = load.size();
-
-            int xyWise, xzWise, zyWise;
-            int len = container.getLength(), height = container.getHeight(), width = container.getWidth();
-            for (auto& b : load) {
-                std::tuple<int, int, int> temp = b.first;
-                int l = std::get<0>(temp), h = std::get<1>(temp), w = std::get<2>(temp), quantity;
-                xyWise = b.second - (b.second % (len / l + height / h));
-                xzWise = b.second - (b.second % (len / l + width / w));
-                zyWise = b.second - (b.second % (height / h + width / w));
-                quantity = std::min(std::min(xyWise, xzWise), zyWise);
-                b.second -= quantity;
-
-                Rectangle rec(l, h, w);
-                for (int j = 0; j < quantity; j++) {
-                    vec.push_back(rec);
-                }
-
-            }
-           // std::vector<Rectangle> unused;
-            for (auto& b : load) {
-                std::tuple<int, int, int> temp = b.first;
-                int l = std::get<0>(temp), h = std::get<1>(temp), w = std::get<2>(temp), quantity = b.second;
-                Rectangle rec(l, h, w);
-                for (int j = 0; j < quantity; j++) {
-                    vec.push_back(rec);
-                }
-            }*/
-
-
-            /* struct RectCMP_SORT {
-                 bool operator() (const Rectangle& rec1, const Rectangle& rec2) const {
-                     return (rec1.topLeftLHS > rec2.topLeftLHS && rec1.topLeftRHS > rec2.topLeftRHS && rec1.topRightLHS > rec2.topRightLHS && rec1.topRightRHS > rec2.topRightRHS &&
-                         rec1.bottomLeftLHS > rec2.bottomLeftLHS && rec1.bottomLeftRHS > rec2.bottomLeftRHS && rec1.bottomRightLHS > rec2.bottomRightLHS && rec1.bottomRightRHS > rec2.bottomRightRHS);
-                     //return rec1 > rec2;
-                 }
-             };
-
-             std::map<Rectangle, RectCMP_SORT, std::pair<Rectangle, int>> loadMap;
-
-             for (auto & b : boxes) {
-                 loadMap[b].second++;
-                 loadMap[b].first = b;
-             }
-
-             auto it = loadMap.begin();
-             std::vector<int> dp(container.getCube()+1);
-             std::vector<Rectangle> ans;
-             int len = container.getCube(), i = it->second.first.getCube();
-             ans.push_back(it->second.first);  it->second.second--;
-             dp[0] = 1;
-
-             for (; i <= len; i++) {
-                 for (auto& b : loadMap) {
-                     if (i - b.second.first.getCube() >= 0 && dp[i - b.second.first.getCube()] > 0 && b.second.second > 0) {
-                         b.second.second--;
-                         ans.push_back(b.second.first);
-                     }
-
-                 }
-
-             }*/
-
-
-             /* std::vector<Rectangle> vec;
-              struct CMP_SORT {
-                  bool operator() (const std::tuple<int, int, int> t1, const std::tuple<int, int, int> t2) const {
-                      return t1 > t2;
-                  }
-              };
-              std::map<std::tuple<int, int, int>, int, CMP_SORT> load;
-
-              for (auto& b : boxes) {
-                  load[std::make_tuple(b.getLength(), b.getHeight(), b.getWidth())]++;
-              }
-
-              int xyWise, xzWise, zyWise;
-              int len = container.getLength(), height = container.getHeight(), width = container.getWidth();
-              for (auto& b : load) {
-                  std::tuple<int, int, int> temp = b.first;
-                  int l = std::get<0>(temp), h = std::get<1>(temp), w = std::get<2>(temp), quantity;
-                  xyWise = b.second - (b.second % (len / l + height / h));
-                  xzWise = b.second - (b.second % (len / l + width / w));
-                  zyWise = b.second - (b.second % (height / h + width / w));
-                  quantity = std::max(std::max(xyWise, xzWise), zyWise);
-                  b.second -= quantity;
-
-                  Rectangle rec(l, h, w);
-                  for (int j = 0; j < quantity; j++) {
-                      vec.push_back(rec);
-                  }
-
-              }
-
-              for (auto& b : load) {
-                  std::tuple<int, int, int> temp = b.first;
-                  int l = std::get<0>(temp), h = std::get<1>(temp), w = std::get<2>(temp), quantity = b.second;
-                  Rectangle rec(l, h, w);
-                  for (int j = 0; j < quantity; j++) {
-                      vec.push_back(rec);
-                  }
-              }
-
-              boxes = vec;*/
-              // int contLen = container.getLength();
-              //  int contHeight = container.getHeight();
-               // int curArea = 0, totalCube = 0;
-               /* for (auto& b : boxes) {
-                   // b.rotateBox(b, contLen);
-                    totalCube += b.getCube();
-                }*/
-
-
-
-                /*  std::queue<Rectangle> temp;
-
-
-                  for (auto& b : boxes) {
-                      if (curArea * contHeight <= totalCube) {
-                          curArea += b.getLength() * b.getWidth();
-                          temp.push(b);  boxes.erase(boxes.begin());
-                      }
-                      else {
-                          break;
-                      }
-                  }
-                  generateBottomBox(temp);
-                  std::vector<Rectangle> tempCont; //temp container to store boxes
-                  while (!temp.empty()) {
-
-                      Container subCont(temp.front().getLength(), contHeight, temp.front().getWidth()); // small container for calcaulating loading order;
-                      //tempCont.push_back(temp.front());
-                      temp.pop();
-
-                      for (auto& b : boxes) {
-                          if (subCont.isFull(b)) {
-                             // tempCont.push_back(b); //if box available for storage push it for storage sequence
-                              subCont.Insert(b);
-                              boxes.erase(boxes.begin());
-                          }
-                          else {
-                              //Rectangle stackedBoxes(subCont.getLength(), subCont.getHeight(), subCont.getWidth());
-                              tempCont.push_back(subCont.container);
-                              break;
-                          }
-                      }
-                      if (boxes.size() == 0)
-                          break;
-                  }
-
-                  while (!temp.empty()) {
-                      tempCont.push_back(temp.front());
-                      temp.pop();
-                  }
-
-                  for (auto& b : boxes) {
-                      tempCont.push_back(b);
-                  }
-
-                  boxes = tempCont;*/
-
-   
-// std::vector<Rectangle> unloadedBoxes;
-// Rectangle rec = boxes[0];
-  //std::random_shuffle(boxesForLoading.begin(), boxesForLoading.end());
-  //std::random_shuffle(boxesForLoading.begin(), boxesForLoading.end());
- /* for (int k = 0; k < (int)containers.size(); k++) {
-      int j = 0;
-      for (auto & box : boxesForLoading) {
-          if (j == 4)
-              j = -1;
-          j++;
-          int q = box.second;
-          (box.first.*rotate[j])();
-          while (q--) {
-              bxRt = 0, ldgApp = 0;
-              int i = 0;
-              for (auto& cont : containers[k]) {
-                  //(b.*rotate[j])();
-                  if (i == 6)
-                      i = 0;
-
-                  if (!(cont.*check[i])(box.first)) {
-                      (cont.*place[i])(box.first);
-                  }
-                 // else {
-                     // unloadedBoxes[i].push_back(box.first);
-                  //}
-                  i++;
-                   else {
-                       for (int i = 0; i < 5; i++) {
-                           (b.*rotate[i])();
-                           if (!(cont.*check[ldgApp])(b)) {
-                               (cont.*place[ldgApp])(b);
-                               break;
-                           }
-                       }
-                   }
-                   //  ldgApp++;
-
-              }
-
-          }
-      }
-      std::random_shuffle(boxesForLoading.begin(), boxesForLoading.end());
-  }*/
