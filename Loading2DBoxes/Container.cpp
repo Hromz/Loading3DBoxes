@@ -1,5 +1,4 @@
 #include "Container.h"
-#include <algorithm>
 
 Container::Container(int length, int height, int width) {
     container.setRectangle(length, height, width);
@@ -31,13 +30,14 @@ bool Container::noCollision(Rectangle& a, Rectangle& b) {
     if (b.getMinZ() >= a.getMaxZ()) return true;
     
     return false;*/
-/* return (a.getMinX() >= b.getMaxX() || b.getMinX() >= a.getMaxX() ||
+ /*return (a.getMinX() >= b.getMaxX() || b.getMinX() >= a.getMaxX() ||
             a.getMinY() >= b.getMaxY() || b.getMinY() >= a.getMaxY() ||
             a.getMinZ() >= b.getMaxZ() || b.getMinZ() >= a.getMaxZ());*/
-   return !(abs((a.getX() + a.getLength() / 2) - (b.getX() + b.getLength() / 2)) * 2 < (a.getLength() + b.getLength()) &&
+  return !(abs((a.getX() + a.getLength() / 2) - (b.getX() + b.getLength() / 2)) * 2 < (a.getLength() + b.getLength()) &&
         (abs((a.getY() + a.getHeight() / 2) - (b.getY() + b.getHeight() / 2)) * 2 < (a.getHeight() + b.getHeight()) &&
             abs((a.getZ() + a.getWidth() / 2) - (b.getZ() + b.getWidth() / 2)) * 2 < (a.getWidth() + b.getWidth())));
 }
+
 
 Rectangle Container::changeCoordsPlacingTop(Rectangle & rec, Rectangle & boxInContainer) {
     Rectangle* temp = new Rectangle;
@@ -249,51 +249,6 @@ Rectangle Container::binarySearchFront(Rectangle& rec, bool & flag) {
    return rec;
 }
 
-void Container::placeInside(std::vector<Rectangle>& boxes) {
-    if (loadingContainer.size() == 0 && boxes.size() > 0){
-        loadingContainer.push_back(boxes[0]);
-        boxes.erase(boxes.begin());
-    }
-
-        for (int i = 0; i < (int)boxes.size(); i++)
-        {
-            bool flag = false;
-            bool placeFront = false;
-            bool placeRHS = false;
-            bool canBeLoaded = false;
-
-            Rectangle temp = binarySearchTop(boxes[i], canBeLoaded);
-            if (canBeLoaded) {
-                loadingContainer.push_back(temp);
-                i = 0;
-                boxes.erase(boxes.begin());
-                placeRHS = true; placeFront = true;
-                flag = true;
-            }
-
-            if (!placeRHS) {
-                Rectangle temp = binarySearchRHS(boxes[i], canBeLoaded);
-                if (canBeLoaded) {
-                    loadingContainer.push_back(temp);
-                    i = 0;
-                    boxes.erase(boxes.begin());
-                    placeFront = true;
-                    flag = true;
-                }
-            }
-
-            if (!placeFront) {
-                Rectangle temp = binarySearchFront(boxes[i], canBeLoaded);
-                if (canBeLoaded) {
-                    loadingContainer.push_back(temp);
-                    i = 0;
-                    boxes.erase(boxes.begin());
-                    flag = true;
-                }
-            }
-        }
-}
-
 bool Container::collisionInsideContainer(Rectangle & rec, int pos) {
    if (!containerCollision(rec))
         return true;
@@ -326,52 +281,6 @@ void Container::printCoords() {
     }
 }
 
-
-int Container::getQuanAlongSide(int side1, int side2){
-    return (container.getLength() / side1) * (container.getWidth() / side2);
-}
-
-//leave this function for pallet distrubtion loading
-void Container::setOptimalLoadingMap(int length, int width, int height) {
-    struct boxHoarding {
-        int height;
-        int qty;
-    };
-
-    std::vector<boxHoarding> boxes;
-    std::vector<int> dp(container.getHeight()+1, INT_MIN);
-    dp[0] = 0;
-
-    boxes.push_back(boxHoarding{ height, getQuanAlongSide(length, width) });
-    boxes.push_back(boxHoarding{ height, getQuanAlongSide(width, length)});
-    boxes.push_back(boxHoarding{ length, getQuanAlongSide(height, width) });
-    boxes.push_back(boxHoarding{ length, getQuanAlongSide(width, height) });
-    boxes.push_back(boxHoarding{ width, getQuanAlongSide(height, length) });
-    boxes.push_back(boxHoarding{ width, getQuanAlongSide(length, height) });
-
-    int totalLoadingHeight = 0;
-    for (int i = 0; i <= container.getHeight(); i++) {
-        for (auto box : boxes) {
-            if (i - box.height >= 0 && dp[i- box.height] != INT_MIN) {
-                dp[i] < dp[i - box.height] + box.qty ? totalLoadingHeight = i : totalLoadingHeight = totalLoadingHeight;
-                dp[i] = std::max(dp[i], box.qty + dp[i - box.height]);
-            }
-        }
-        
-    }
-    int totalQuantity = 0;
-
-    //Restoring best loading option for placing inside loading container via coordinates
-    for (int i = totalLoadingHeight; i > 0;) {
-        for(auto box : boxes)
-        if (i - box.height >= 0 && dp[i - box.height] != INT_MIN && dp[i] - box.qty == dp[i-box.height]) {
-           std::cout << "At length " << i << " " << box.qty << " boxes were loaded" << " height of box hoarding is " << box.height<<'\n';
-           totalQuantity += box.qty;
-           i -= box.height;
-        }
-    }
-    std::cout << totalQuantity << " boxes were loaded!\n";
-}
 
 bool Container::isLoadingCorrect() {
     for (int i = 0; i < (int)loadingContainer.size(); i++) {
@@ -452,7 +361,7 @@ void Container::bruteForce_Loading(Rectangle& rec, bool & flag) {
     int right = (int)loadingContainer.size()-1;
     Rectangle temp;
     
-        for (int i = 0; i <= right; i++) {
+        for (int i = right; i >= 0; i--) {
             temp = changeCoordsPlacingRHS(rec, loadingContainer[i]);
             if (!collisionInsideContainer(temp, i)) {
                 loadingContainer.push_back(temp);
@@ -461,7 +370,7 @@ void Container::bruteForce_Loading(Rectangle& rec, bool & flag) {
             }
         }
   
-    for (int i = 0; i <= right; i++) {
+    for (int i = right; i >= 0; i--) {
         temp = changeCoordsPlacingFront(rec, loadingContainer[i]);
         if (!collisionInsideContainer(temp, i)) {
             loadingContainer.push_back(temp);
@@ -470,7 +379,7 @@ void Container::bruteForce_Loading(Rectangle& rec, bool & flag) {
         }
     }
    
-    for (int i = 0; i <= right; i++) {
+    for (int i = right; i >= 0; i--) {
         temp = changeCoordsPlacingTop(rec, loadingContainer[i]);
         if (!collisionInsideContainer(temp, i)) {
             loadingContainer.push_back(temp);
@@ -481,118 +390,125 @@ void Container::bruteForce_Loading(Rectangle& rec, bool & flag) {
    
 }
 
-std::vector<std::pair<Rectangle, int>> Container::merge_boxes(std::vector<std::pair<Rectangle, int>>& boxes) {
-    std::vector<std::pair<Rectangle, int>> ans;
+void Container::merge_boxes(std::vector<std::pair<Rectangle, std::pair<int, bool>>>& boxes) {
+    std::vector<std::pair<Rectangle, std::pair<int, bool>>> ans;
 
     for (auto r : boxes) {
-        Rectangle temp(r.first.getLength()*4, r.first.getHeight(), r.first.getWidth()*2);
-        
-        int qty = r.second / 8;
-        int left_qty = r.second % 8;
 
-        if (qty > 0 )ans.push_back({ temp, qty });
-        if (left_qty > 0) ans.push_back({ r.first, left_qty });
+        Rectangle temp(r.first.getLength() * 2, r.first.getHeight(), r.first.getWidth() * 2);
+        
+        int qty = r.second.first / 4;
+        int left_qty = r.second.first % 4;
+
+        if (qty > 0)ans.push_back({ temp, {qty, true } });
+        if (left_qty > 0) ans.push_back({ r.first, {left_qty, false } });
     }
-    return ans;
+    boxes = ans;
 }
 
-void Container::loadBoxes(std::vector<Rectangle>& boxes) {
-   struct CMP_SORT {
-       bool operator() (const std::tuple<int, int, int> t1, const std::tuple<int, int, int> t2) const {
-           return t1 > t2;
-       }
-   };
-   std::map<std::tuple<int, int, int>, int, CMP_SORT> loadMap;
-
-   for (auto& b : boxes) {
-       loadMap[std::make_tuple(b.getLength(), b.getHeight(), b.getWidth())]++;
-   }
-
-   std::vector<std::pair<Rectangle, int>> boxesForLoading;
-
-   for (auto& load : loadMap) {
-       std::tuple<int, int, int> temp = load.first;
-       int l = std::get<0>(temp), h = std::get<1>(temp), w = std::get<2>(temp);
-       Rectangle box(l, h, w);
-       int q = load.second;
-       boxesForLoading.push_back(std::make_pair(box, q));
-   }
-
-    int maxBoxes = 0;
-
-    std::vector<Container> containers(1);
-        for (int i = 0; i < 1; i++) {
-            int l = container.getLength(), h = container.getHeight(), w = container.getWidth();
-            Container temp(l, h, w);
-            containers[i] = temp;
-        }
-  
-
-    boxesForLoading = merge_boxes(boxesForLoading);
-    std::vector<std::vector<Rectangle>> unusedBoxes(1);
+void Container::loadBoxes(std::vector<std::pair<Rectangle, std::pair<int, bool>>> boxes) {
     double cubes = 0;
+    merge_boxes(boxes);
 
-    /*sort(boxesForLoading.begin(), boxesForLoading.end(), [](std::pair<Rectangle, int>& rec1, std::pair<Rectangle, int>& rec2) {
-        return rec1.second > rec2.second;
-     });*/
-
-    int contIndex = 0;
-
-    std::random_device dev;
-    std::mt19937 rng(dev());
-    std::uniform_int_distribution<std::mt19937::result_type> dist6(0, 5);
-
-    std::random_shuffle(boxesForLoading.begin(), boxesForLoading.end());
-    for (auto& cont : containers) {
-       
-        for (auto& box : boxesForLoading) {
-            int rotate_box = dist6(rng), place_style = dist6(rng);
-            int q = box.second;
-            (box.first.*rotate[rotate_box])();
-            while (q--) {
-                if (!(cont.*check[place_style])(box.first)) {
-                    (cont.*place[place_style])(box.first);
-                    //cubes += ((double)containers[0].loadingContainer.back().getCube() / 1000000.0);
-                }
-                /*if (cont.isFull(box.first)) {
-                    cont.Insert(box.first);
-                    cubes += ((double)containers[0].loadingContainer.back().getCube() / 1000000.0);
-                }*/
-                else {
-                    for(int i = 0; i < q; i++)
-                      unusedBoxes[contIndex].push_back(box.first);
-                    break;
-                }
-            }
-        }
-        contIndex++;
-    }
-
-
-    int i = 0;
-
-        if(unusedBoxes[i].size() > 0)
-        sort(unusedBoxes[i].begin(), unusedBoxes[i].end(), [](Rectangle& rec1, Rectangle& rec2) {
-            return rec1.getCube() < rec2.getCube();
+   /* sort(boxes.begin(), boxes.end(), [](std::pair<Rectangle, std::pair<int, bool>>& rec1, std::pair < Rectangle, std::pair<int, bool>>& rec2) {
+        return rec1.first.getCube() > rec2.first.getCube();
+        });*/
+    std::random_shuffle(boxes.begin(), boxes.end());
+    sort(boxes.begin(), boxes.end(), [](std::pair<Rectangle, std::pair<int, bool>>& rec1, std::pair < Rectangle, std::pair<int, bool>>& rec2) {
+        return rec1.second.second > rec2.second.second;
         });
 
-        for (int z = 0; z < unusedBoxes[i].size(); z++) {
-            
-           bool flag = false;
-           containers[i].bruteForce_Loading(unusedBoxes[i][z], flag);
-           if (flag) {
-              // cubes += (double)unusedBoxes[i][z].getCube() / 1000000.0; 
-           }
-           else {
-               boxes_left++;
-           }
+        for (auto& box : boxes) {
+            Rectangle tempBox = box.first;
+            std::random_device dev;
+            std::mt19937 rng(dev());
+            std::uniform_int_distribution<std::mt19937::result_type> dist6(0, 4);
+            int rotate_box = dist6(rng), place_style = dist6(rng);
+            int q = box.second.first;
+
+            (tempBox.*rotate[rotate_box])();
+            while (q--) {
+               if (!isFull(tempBox)) {
+                    Insert(tempBox);
+                    box.second.first--;
+                }
+                /*if (!(cont.*check[place_style])(box.first)) {
+                    (cont.*place[place_style])(box.first);
+                    box.second--;
+                }*/
+            }
         }
 
-        loadingContainer = containers[0].loadingContainer;
-        for (int k = 0; k < (int)containers[i].loadingContainer.size(); k++) {
-            cubes += ((double)containers[i].loadingContainer[k].getCube() / 1000000.0);
+    std::random_shuffle(boxes.begin(), boxes.end());
+    for (auto& box : boxes) {
+        int q = box.second.first;
+        while (q--) {
+            bool flag = false;
+            bruteForce_Loading(box.first, flag);
+            if (flag) box.second.first--;
+            else {
+                boxes_left++;
+            }
         }
-        loadedVolume = cubes;    
+
+    }
+
+        for (int k = 0; k < (int)loadingContainer.size(); k++) {
+            cubes += ((double)loadingContainer[k].getCube() / 1000000.0);
+        }
+        loadedVolume = cubes;
+        unmerge_loadBoxes(boxes);
+        boxesLeft = boxes;
+}
+
+void Container::unmerge_loadBoxes(std::vector<std::pair<Rectangle, std::pair<int, bool>>> & boxes) {
+    std::vector<std::pair<Rectangle, std::pair<int, bool>>> temp;
+
+    for (int i = 0; i < boxes.size(); i++) {
+        if (boxes[i].second.first > 0 && boxes[i].second.second) {
+            int q = boxes[i].second.first * 4;
+            int l = boxes[i].first.getLength();
+            int h = boxes[i].first.getHeight();
+            int w = boxes[i].first.getWidth();
+
+            //l = std::max(l, std::max(h, w));
+           // w = std::min(l, std::min(h, w));
+          /*  if (th >= tl && tl >= tw) {
+                l = th;
+                h = tl;
+                w = tw;
+            }
+            else if (th >= tl && tw >= tl) {
+                l = th;
+                h = tw;
+                w = tl;
+            }
+            else if (tw >= tl && tl >= th) {
+                l = tw;
+                h = tl;
+                w = th;
+            }
+            else if (tw >= tl && th >= tl) {
+                l = tw;
+                h = th;
+                w = tl;
+            }
+            else {
+                l = tl;
+                h = th;
+                w = tw;
+            }*/
+
+            l /= 2;
+            w /= 2;
+            Rectangle rec(l, h, w);
+            temp.push_back({ rec, {q, false} });
+        }
+        else if(boxes[i].second.first > 0){
+            temp.push_back(boxes[i]);
+        }
+    }
+    boxes = temp;
 }
 
 
