@@ -1,4 +1,4 @@
-# Loading3DBoxes
+# Loading3DBoxes, container loading problem
 Loading 3D boxes into container.
 This is my pet project that still in development. Right know it's only console and i'm trying to figure out best solution for this problem, after im gonna add GUI and 3d visualisation of loaded boxes.
 
