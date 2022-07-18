@@ -38,7 +38,7 @@ Rectangle::Rectangle(Coords& tl, Coords& tr, Coords& bl, Coords& br, Coords & tl
     rotate[5] = &Rectangle::turnSideUpFront;
 }
 
-Rectangle::Rectangle(int length, int height,int width){
+Rectangle::Rectangle(float length, float height,float width){
     topLeftLHS.setCoords(0, height, 0);
     topRightLHS.setCoords(length, height, 0);
     bottomLeftLHS.setCoords(0, 0, 0);
@@ -58,7 +58,7 @@ Rectangle::Rectangle(int length, int height,int width){
 }
 
 // length - x, height - y, width - z
-void Rectangle::setRectangle(int length,int height, int width){
+void Rectangle::setRectangle(float length,float height, float width){
     topLeftLHS.setCoords(0, height, 0);
     topRightLHS.setCoords(length, height, 0);
     bottomLeftLHS.setCoords(0, 0, 0);

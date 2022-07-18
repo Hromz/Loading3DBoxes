@@ -31,7 +31,7 @@ public:
     };
     Rectangle(const Rectangle & rec);
     Rectangle(Coords& tl, Coords& tp, Coords& bl, Coords& br, Coords& tlr, Coords& tpr, Coords& blr, Coords& brr);
-    Rectangle(int length,int height, int width);
+    Rectangle(float length,float height, float width);
     ~Rectangle() { };
 
     Coords gettopLeftLHS() { return topLeftLHS; }
@@ -39,23 +39,23 @@ public:
     Coords getBottomLeft() { return bottomLeftLHS; }
     Coords getBottomRight() { return bottomRightLHS; }
 
-    int getLength(){ return bottomRightLHS.getX() - bottomLeftLHS.getX(); }
-    int getHeight() { return topRightLHS.getY() - bottomRightLHS.getY(); }
-    int getWidth() { return topRightRHS.getZ() - topRightLHS.getZ(); }
-    int getCube() { return (getLength() * getHeight() * getWidth());  }
-    int getArea() { return (getLength() * getWidth()); }
+    float getLength(){ return bottomRightLHS.getX() - bottomLeftLHS.getX(); }
+    float getHeight() { return topRightLHS.getY() - bottomRightLHS.getY(); }
+    float getWidth() { return topRightRHS.getZ() - topRightLHS.getZ(); }
+    float getCube() { return (getLength() * getHeight() * getWidth());  }
+    float getArea() { return (getLength() * getWidth()); }
 
-    int getX() { return topRightLHS.getX(); }
-    int getY() { return topRightLHS.getY(); }
-    int getZ() { return topRightRHS.getZ(); }
+    float getX() { return topRightLHS.getX(); }
+    float getY() { return topRightLHS.getY(); }
+    float getZ() { return topRightRHS.getZ(); }
 
-    int getMinY() { return bottomLeftLHS.getY(); }
-    int getMinZ() { return bottomLeftLHS.getZ(); }
-    int getMinX() { return bottomLeftLHS.getX(); }
+    float getMinY() { return bottomLeftLHS.getY(); }
+    float getMinZ() { return bottomLeftLHS.getZ(); }
+    float getMinX() { return bottomLeftLHS.getX(); }
 
-    int getMaxX() { return topRightRHS.getX(); }
-    int getMaxY() { return topRightRHS.getY(); }
-    int getMaxZ() { return topRightRHS.getZ(); }
+    float getMaxX() { return topRightRHS.getX(); }
+    float getMaxY() { return topRightRHS.getY(); }
+    float getMaxZ() { return topRightRHS.getZ(); }
 
 
     void settopLeftLHS(Coords & coords) { topLeftLHS = coords; }
@@ -87,7 +87,7 @@ public:
     }
 
     // length - x, height - y, width - z
-    void setRectangle(int length,int height, int width);
+    void setRectangle(float length,float height, float width);
 
    friend std::ostream & operator<<(std::ostream & os, const Rectangle& rec) {
        os << "LHS\n";

@@ -5,27 +5,27 @@
 class Coords
 {
 private:
-    int x, y, z;
+    float x, y, z;
 public:
     Coords() { x = 0; y = 0; z = 0; };
-    Coords(int x, int y, int z) { this->x = x; this->y = y; this->z = z; };
+    Coords(float x, float y, float z) { this->x = x; this->y = y; this->z = z; };
     Coords(Coords& c) { x = c.x; y = c.y; z = c.z;};
     ~Coords() {};
 
-    int getX() { return x; }
-    int getY() { return y; }
-    int getZ() { return z; }
+    float getX() { return x; }
+    float getY() { return y; }
+    float getZ() { return z; }
 
-    void setX(int x) { this->x = x; }
-    void setY(int y) { this->y = y; }
-    void setZ(int z) { this->z = z; }
+    void setX(float x) { this->x = x; }
+    void setY(float y) { this->y = y; }
+    void setZ(float z) { this->z = z; }
 
-    void moveLengthCoordinate(int x) { this->x += x; }
-    void moveHeightCoordinate(int y) { this->y += y; }
-    void moveWidthCoordinate(int z) { this->z += z; }
+    void moveLengthCoordinate(float x) { this->x += x; }
+    void moveHeightCoordinate(float y) { this->y += y; }
+    void moveWidthCoordinate(float z) { this->z += z; }
 
     void resize(const Coords& c);
-    void setCoords(int length, int height, int width) { x = length, y = height, z = width; }
+    void setCoords(float length, float height, float width) { x = length, y = height, z = width; }
 
     Coords operator +(const Coords & c1){
         Coords * temp = new Coords;

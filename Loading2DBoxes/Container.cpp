@@ -1,6 +1,6 @@
 #include "Container.h"
 
-Container::Container(int length, int height, int width) {
+Container::Container(float length, float height, float width) {
     container.setRectangle(length, height, width);
     place[0] = &Container::bs_FR;
     place[1] = &Container::bs_RF;
@@ -18,7 +18,8 @@ Container::Container(int length, int height, int width) {
 }
 
 bool Container::containerCollision(Rectangle & rec) {
-    return (container.getX() >= rec.getX() && container.getY() >= rec.getY() && container.getZ() >= rec.getZ());
+    return (container.getMaxX() >= rec.getMaxX() && container.getMaxY() >= rec.getMaxY() && container.getMaxZ() >= rec.getMaxZ() &&
+        container.getMinX() <= rec.getMinX() && container.getMinY() <= rec.getMinY() && container.getMinZ() <= rec.getMinZ());
 }
 
 bool Container::noCollision(Rectangle& a, Rectangle& b) {
@@ -33,9 +34,12 @@ bool Container::noCollision(Rectangle& a, Rectangle& b) {
  /*return (a.getMinX() >= b.getMaxX() || b.getMinX() >= a.getMaxX() ||
             a.getMinY() >= b.getMaxY() || b.getMinY() >= a.getMaxY() ||
             a.getMinZ() >= b.getMaxZ() || b.getMinZ() >= a.getMaxZ());*/
-  return !(abs((a.getX() + a.getLength() / 2) - (b.getX() + b.getLength() / 2)) * 2 < (a.getLength() + b.getLength()) &&
-        (abs((a.getY() + a.getHeight() / 2) - (b.getY() + b.getHeight() / 2)) * 2 < (a.getHeight() + b.getHeight()) &&
-            abs((a.getZ() + a.getWidth() / 2) - (b.getZ() + b.getWidth() / 2)) * 2 < (a.getWidth() + b.getWidth())));
+  return !(abs((a.getX() + a.getLength() / 2.0f) - (b.getX() + b.getLength() / 2.0f)) * 2.0f < (a.getLength() + b.getLength()) &&
+        (abs((a.getY() + a.getHeight() / 2.0f) - (b.getY() + b.getHeight() / 2.0f)) * 2.0f < (a.getHeight() + b.getHeight()) &&
+            abs((a.getZ() + a.getWidth() / 2.0f) - (b.getZ() + b.getWidth() / 2.0f)) * 2.0f < (a.getWidth() + b.getWidth())));
+   /* return ((a.getMinX() <= b.getMaxX() && a.getMaxX() >= b.getMinX()) &&
+        (a.getMinY() <= b.getMaxY() && a.getMaxY() >= b.getMinY()) &&
+        (a.getMinZ() <= b.getMaxZ() && a.getMaxZ() >= b.getMinZ()));*/
 }
 
 
@@ -357,34 +361,42 @@ void Container::bruteForce_Loading(Rectangle& rec, bool & flag) {
 
     if (loadingContainer.size() == 0) {
         loadingContainer.push_back(rec);
+        flag = true;
+        return;
     }
     int right = (int)loadingContainer.size()-1;
     Rectangle temp;
     
+    for (int i = 0; i < 6; i++) {
+        (rec.*rotate[i])();
         for (int i = right; i >= 0; i--) {
             temp = changeCoordsPlacingRHS(rec, loadingContainer[i]);
-            if (!collisionInsideContainer(temp, i)) {
+            if (!collisionInsideContainer(temp, i) && loadedVolume + (temp.getCube()) / 1000000.0f <= getContainerCube()) {
                 loadingContainer.push_back(temp);
+                loadedVolume += temp.getCube() / 1000000.0f;
                 flag = true;
                 return;
             }
         }
-  
-    for (int i = right; i >= 0; i--) {
-        temp = changeCoordsPlacingFront(rec, loadingContainer[i]);
-        if (!collisionInsideContainer(temp, i)) {
-            loadingContainer.push_back(temp);
-            flag = true;
-            return;
+
+        for (int i = right; i >= 0; i--) {
+            temp = changeCoordsPlacingFront(rec, loadingContainer[i]);
+            if (!collisionInsideContainer(temp, i) && loadedVolume + (temp.getCube()) / 1000000.0f <= getContainerCube()) {
+                loadingContainer.push_back(temp);
+                loadedVolume += temp.getCube() / 1000000.0f;
+                flag = true;
+                return;
+            }
         }
-    }
-   
-    for (int i = right; i >= 0; i--) {
-        temp = changeCoordsPlacingTop(rec, loadingContainer[i]);
-        if (!collisionInsideContainer(temp, i)) {
-            loadingContainer.push_back(temp);
-            flag = true;
-            return;
+
+        for (int i = right; i >= 0; i--) {
+            temp = changeCoordsPlacingTop(rec, loadingContainer[i]);
+            if (!collisionInsideContainer(temp, i) && loadedVolume + (temp.getCube()) / 1000000.0f <= getContainerCube()) {
+                loadingContainer.push_back(temp);
+                loadedVolume += temp.getCube() / 1000000.0f;
+                flag = true;
+                return;
+            }
         }
     }
    
@@ -395,7 +407,7 @@ void Container::merge_boxes(std::vector<std::pair<Rectangle, std::pair<int, bool
 
     for (auto r : boxes) {
 
-        Rectangle temp(r.first.getLength() * 2, r.first.getHeight(), r.first.getWidth() * 2);
+        Rectangle temp(r.first.getLength()*2.0f, r.first.getHeight(), r.first.getWidth() * 2.0f);
         
         int qty = r.second.first / 4;
         int left_qty = r.second.first % 4;
@@ -407,17 +419,7 @@ void Container::merge_boxes(std::vector<std::pair<Rectangle, std::pair<int, bool
 }
 
 void Container::loadBoxes(std::vector<std::pair<Rectangle, std::pair<int, bool>>> boxes) {
-    double cubes = 0;
-    merge_boxes(boxes);
-
-   /* sort(boxes.begin(), boxes.end(), [](std::pair<Rectangle, std::pair<int, bool>>& rec1, std::pair < Rectangle, std::pair<int, bool>>& rec2) {
-        return rec1.first.getCube() > rec2.first.getCube();
-        });*/
-    std::random_shuffle(boxes.begin(), boxes.end());
-    sort(boxes.begin(), boxes.end(), [](std::pair<Rectangle, std::pair<int, bool>>& rec1, std::pair < Rectangle, std::pair<int, bool>>& rec2) {
-        return rec1.second.second > rec2.second.second;
-        });
-
+    float cubes = 0;
         for (auto& box : boxes) {
             Rectangle tempBox = box.first;
             std::random_device dev;
@@ -427,37 +429,18 @@ void Container::loadBoxes(std::vector<std::pair<Rectangle, std::pair<int, bool>>
             int q = box.second.first;
 
             (tempBox.*rotate[rotate_box])();
-            while (q--) {
+            while (q-- && cubes + (tempBox.getCube()) / 1000000.0f <= getContainerCube()) {
                if (!isFull(tempBox)) {
                     Insert(tempBox);
+                    cubes += (tempBox.getCube()) / 1000000.0f;
                     box.second.first--;
                 }
-                /*if (!(cont.*check[place_style])(box.first)) {
-                    (cont.*place[place_style])(box.first);
-                    box.second--;
-                }*/
+               else {
+                   break;
+               }
             }
-        }
-
-    std::random_shuffle(boxes.begin(), boxes.end());
-    for (auto& box : boxes) {
-        int q = box.second.first;
-        while (q--) {
-            bool flag = false;
-            bruteForce_Loading(box.first, flag);
-            if (flag) box.second.first--;
-            else {
-                boxes_left++;
-            }
-        }
-
-    }
-
-        for (int k = 0; k < (int)loadingContainer.size(); k++) {
-            cubes += ((double)loadingContainer[k].getCube() / 1000000.0);
         }
         loadedVolume = cubes;
-        unmerge_loadBoxes(boxes);
         boxesLeft = boxes;
 }
 
@@ -467,38 +450,12 @@ void Container::unmerge_loadBoxes(std::vector<std::pair<Rectangle, std::pair<int
     for (int i = 0; i < boxes.size(); i++) {
         if (boxes[i].second.first > 0 && boxes[i].second.second) {
             int q = boxes[i].second.first * 4;
-            int l = boxes[i].first.getLength();
-            int h = boxes[i].first.getHeight();
-            int w = boxes[i].first.getWidth();
+            float l = boxes[i].first.getLength();
+            float h = boxes[i].first.getHeight();
+            float w = boxes[i].first.getWidth();
 
-            //l = std::max(l, std::max(h, w));
-           // w = std::min(l, std::min(h, w));
-          /*  if (th >= tl && tl >= tw) {
-                l = th;
-                h = tl;
-                w = tw;
-            }
-            else if (th >= tl && tw >= tl) {
-                l = th;
-                h = tw;
-                w = tl;
-            }
-            else if (tw >= tl && tl >= th) {
-                l = tw;
-                h = tl;
-                w = th;
-            }
-            else if (tw >= tl && th >= tl) {
-                l = tw;
-                h = th;
-                w = tl;
-            }
-            else {
-                l = tl;
-                h = th;
-                w = tw;
-            }*/
-
+           // l = std::max(l, std::max(h, w));
+           // w = std::min(l, std::max(h, w));
             l /= 2;
             w /= 2;
             Rectangle rec(l, h, w);

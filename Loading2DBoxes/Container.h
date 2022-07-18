@@ -9,20 +9,24 @@
 
 class Container : Rectangle
 {   
-public:
+private:
     std::vector<Rectangle> loadingContainer;
     Rectangle container;
     std::vector<Rectangle> boxesToBeLoaded;
     std::vector<std::pair<Rectangle, std::pair<int, bool>>> boxesLeft;
-
-    double loadedVolume = 0;
+public:
+    float loadedVolume = 0;
     int boxes_left = 0;
 
-    void setLoadedVolume(double vol) { loadedVolume = vol; }
-    double getLoadedVolume() { return loadedVolume; }
+
+    float getContainerCube() { return container.getCube() / 1000000.0f; }
+    std::vector<std::pair<Rectangle, std::pair<int, bool>>> getBoxesLeft() { return boxesLeft; }
+    int getLoadingContainerSize() { return (int)loadingContainer.size(); }
+    void setLoadedVolume(float vol) { loadedVolume = vol; }
+    float getLoadedVolume() { return loadedVolume; }
 
     Container() {};
-    Container(int length, int height, int width);
+    Container(float length, float height, float width);
     ~Container() {};
 
     int getLoadedQuan() { return (int)loadingContainer.size(); }
@@ -51,6 +55,11 @@ public:
     void loadBoxes(std::vector<std::pair<Rectangle, std::pair<int, bool>>> boxes);
     void unmerge_loadBoxes(std::vector<std::pair<Rectangle, std::pair<int, bool>>> & boxes);
     void Insert(Rectangle& rec);
+    void clearContainer() {
+       loadingContainer.clear();
+       boxesToBeLoaded.clear();
+       boxesLeft.clear();
+    }
 
     Rectangle binarySearchRHS(Rectangle& rec, bool & flag);
     Rectangle binarySearchTop(Rectangle& rec, bool & flag);
