@@ -10,7 +10,7 @@ using std::cin;
 
 int main()
 {
-    int test = 25; float length = 1360, height = 200, width = 240;
+    int test = 12; float length = 1360, height = 200, width = 240;
     float carCube = (length / 100.0f) * (width / 100.0f) * (height / 100.0f);
     cout << "Car cube is " << carCube << "\n";
 
@@ -24,7 +24,7 @@ int main()
             std::random_device dev;
             std::mt19937 rng(dev());
             std::uniform_int_distribution<std::mt19937::result_type> dist6(20, 71);
-            std::uniform_int_distribution<std::mt19937::result_type> dist5(15, 45);
+            std::uniform_int_distribution<std::mt19937::result_type> dist5(15, 25);
             int quantity = dist5(rng); float boxLength = dist6(rng), boxHeight = dist6(rng), boxWidth = dist6(rng);
 
             Rectangle temp(boxLength, boxHeight, boxWidth);
@@ -37,11 +37,8 @@ int main()
 
         std::vector<Container> subContainer(4, Container(length/2.0f , height, width/ 2.0f));
         subContainer[0].merge_boxes(boxes);
-       /* sort(boxes.begin(), boxes.end(), [](std::pair<Rectangle, std::pair<int, bool>>& rec1, std::pair < Rectangle, std::pair<int, bool>>& rec2) {
-            return rec1.second.second > rec2.second.second;
-       });*/
         for (int i = 0; i < (int)subContainer.size(); i++) {
-            int check = 401;
+            int check = 701;
 
             std::vector<std::pair<double, int>> vec;
             Container tCont(length / 2.0f, height, width / 2.0f);
@@ -59,6 +56,9 @@ int main()
                         vec.push_back({ totalVolume, (int)tCont.getLoadingContainerSize() });
                         subContainer[i] = tCont;
                     }
+                    if (vec[0].first >= tCont.getContainerCube() * 0.97f) {
+                        break;
+                    }
                 tCont.clearContainer();
             }
             totalBoxes += vec[0].second;
@@ -67,7 +67,7 @@ int main()
 
         subContainer[0].unmerge_loadBoxes(boxes);
         sort(boxes.begin(), boxes.end(), [](std::pair<Rectangle, std::pair<int, bool>>& rec1, std::pair <Rectangle, std::pair<int, bool>>& rec2) {
-            return rec1.second.second > rec2.second.second;       
+            return rec1.first > rec2.first;       
         });
 
         for (auto& b : boxes) {

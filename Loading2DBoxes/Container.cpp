@@ -23,18 +23,11 @@ bool Container::containerCollision(Rectangle & rec) {
 }
 
 bool Container::noCollision(Rectangle& a, Rectangle& b) {
-    /*if (a.getMinX() >= b.getMaxX()) return true;
-    if(b.getMinX() >= a.getMaxX()) return true;
-    if (a.getMinY() >= b.getMaxY()) return true;
-    if (b.getMinY() >= a.getMaxY()) return true;
-    if (a.getMinZ() >= b.getMaxZ()) return true;
-    if (b.getMinZ() >= a.getMaxZ()) return true;
-    
-    return false;*/
+
  /*return (a.getMinX() >= b.getMaxX() || b.getMinX() >= a.getMaxX() ||
             a.getMinY() >= b.getMaxY() || b.getMinY() >= a.getMaxY() ||
             a.getMinZ() >= b.getMaxZ() || b.getMinZ() >= a.getMaxZ());*/
-  return !(abs((a.getX() + a.getLength() / 2.0f) - (b.getX() + b.getLength() / 2.0f)) * 2.0f < (a.getLength() + b.getLength()) &&
+ return (abs((a.getX() + a.getLength() / 2.0f) - (b.getX() + b.getLength() / 2.0f)) * 2.0f < (a.getLength() + b.getLength()) &&
         (abs((a.getY() + a.getHeight() / 2.0f) - (b.getY() + b.getHeight() / 2.0f)) * 2.0f < (a.getHeight() + b.getHeight()) &&
             abs((a.getZ() + a.getWidth() / 2.0f) - (b.getZ() + b.getWidth() / 2.0f)) * 2.0f < (a.getWidth() + b.getWidth())));
    /* return ((a.getMinX() <= b.getMaxX() && a.getMaxX() >= b.getMinX()) &&
@@ -429,7 +422,7 @@ void Container::loadBoxes(std::vector<std::pair<Rectangle, std::pair<int, bool>>
             int q = box.second.first;
 
             (tempBox.*rotate[rotate_box])();
-            while (q-- && cubes + (tempBox.getCube()) / 1000000.0f <= getContainerCube()) {
+            while (q--) {
                if (!isFull(tempBox)) {
                     Insert(tempBox);
                     cubes += (tempBox.getCube()) / 1000000.0f;

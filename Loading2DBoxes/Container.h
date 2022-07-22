@@ -83,7 +83,11 @@ public:
         loadingContainer = cont.loadingContainer;
         container = cont.container;
         boxesToBeLoaded = cont.boxesToBeLoaded;
-        boxesLeft = cont.boxesLeft;
+        boxesLeft = {};
+        for (auto b : cont.boxesLeft) {
+            if (b.second.first > 0)
+                boxesLeft.push_back(b);
+        }
 
         loadedVolume = cont.loadedVolume;
         boxes_left = cont.boxes_left;
